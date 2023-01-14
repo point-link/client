@@ -1,4 +1,6 @@
 {
+  "name": "miixinn-client",
+  "version": "0.9.0",
   "description": "The client of MiiXinn",
   "main": "build/main/main.js",
   "scripts": {
