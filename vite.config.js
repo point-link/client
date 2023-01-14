@@ -1,5 +1,6 @@
 const Path = require('path')
-const vuePlugin = require('@vitejs/plugin-vue')
+const { default: ResolveAlias } = require('vite-plugin-easy-resolve-alias')
+const Vue = require('@vitejs/plugin-vue')
 
 const { defineConfig } = require('vite')
 
@@ -17,7 +18,10 @@ const config = defineConfig({
     outDir: Path.join(__dirname, 'build', 'renderer'),
     emptyOutDir: true,
   },
-  plugins: [vuePlugin()],
+  plugins: [
+    ResolveAlias({ '~/': 'src/renderer/' }),
+    Vue(),
+  ],
 })
 
 module.exports = config
