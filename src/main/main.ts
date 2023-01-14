@@ -1,7 +1,8 @@
 import { join } from 'path'
-import { BrowserWindow, app, session } from 'electron'
+import { BrowserWindow, Menu, app, globalShortcut, session } from 'electron'
 
-function createWindow() {
+app.whenReady().then(() => {
+  // 主窗口
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -11,7 +12,6 @@ function createWindow() {
       contextIsolation: true,
     },
   })
-
   if (process.env.NODE_ENV === 'development') {
     const rendererPort = process.argv[2]
     mainWindow.loadURL(`http://localhost:${rendererPort}`)
@@ -19,11 +19,11 @@ function createWindow() {
   else {
     mainWindow.loadFile(join(app.getAppPath(), 'renderer', 'index.html'))
   }
-}
 
-app.whenReady().then(() => {
-  createWindow()
+  // 不设置菜单栏
+  Menu.setApplicationMenu(null)
 
+  // session
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
@@ -33,11 +33,9 @@ app.whenReady().then(() => {
     })
   })
 
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0)
-      createWindow()
+  // 开发者工具
+  globalShortcut.register('Alt+D', () => {
+    mainWindow.webContents.toggleDevTools()
   })
 })
 
