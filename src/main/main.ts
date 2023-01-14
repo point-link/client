@@ -19,6 +19,13 @@ function createWindow () {
   else {
     mainWindow.loadFile(join(app.getAppPath(), 'renderer', 'index.html'));
   }
+
+  // 开发者工具
+  ipcMain.on('dev-tools', (event, action) => {
+    if (action === 'toggle') {
+      mainWindow.webContents.toggleDevTools();
+    }
+  })
 }
 
 app.whenReady().then(() => {
@@ -45,7 +52,3 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 });
-
-ipcMain.on('message', (event, message) => {
-  console.log(message);
-})
