@@ -11,7 +11,11 @@ function logout() {
 </script>
 
 <template>
-  <div>
+  <div
+    p-4
+    text-center
+    space-y-4
+  >
     <h1>
       主页
     </h1>

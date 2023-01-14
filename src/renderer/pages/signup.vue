@@ -2,23 +2,22 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElButton, ElInput } from 'element-plus'
-import { login as loginApi } from '~/api/account'
-import { failureHandler } from '~/utils/net'
+import { signup as signupApi } from '~/api/account'
+import { failureHandler, successHandler } from '~/utils/net'
 
 const router = useRouter()
 
 const username = ref('')
 const password = ref('')
 
-async function login() {
-  const res = await loginApi(username.value, password.value)
+async function signup() {
+  const res = await signupApi(username.value, password.value)
   if (!res.ok) {
-    failureHandler('登录失败', res)
+    failureHandler('注册失败', res)
     return
   }
-  const { token } = await res.json()
-  sessionStorage.setItem('token', token)
-  router.push('/')
+  successHandler('注册成功')
+  router.push('/login')
   username.value = ''
   password.value = ''
 }
@@ -40,16 +39,13 @@ async function login() {
       placeholder="密码"
       show-password
     />
-    <ElButton @click="login">
-      登录
-    </ElButton>
-    <div
-      text-sm
-      opacity-75
-    >
-      <RouterLink hover:text-blue to="/signup">
+    <div>
+      <ElButton @click="router.replace('/login')">
+        取消
+      </ElButton>
+      <ElButton @click="signup">
         注册
-      </RouterLink>
+      </ElButton>
     </div>
   </div>
 </template>
