@@ -19,13 +19,6 @@ function createWindow () {
   else {
     mainWindow.loadFile(join(app.getAppPath(), 'renderer', 'index.html'));
   }
-
-  // 开发者工具
-  ipcMain.on('dev-tools', (event, action) => {
-    if (action === 'toggle') {
-      mainWindow.webContents.toggleDevTools();
-    }
-  })
 }
 
 app.whenReady().then(() => {
