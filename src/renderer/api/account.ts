@@ -1,8 +1,7 @@
 import type { Account } from '~/typings/app'
 import { hex, sha256 } from '~/utils/plain'
 import { jsonFetch } from '~/utils/net'
-
-const API_BASE_PATH = 'https://miixinn-server-dev.deno.dev'
+import { API_BASE_PATH } from '~/config'
 
 export async function login(username: string, password: string) {
   password = hex(await sha256(password))
