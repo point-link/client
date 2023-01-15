@@ -18,8 +18,8 @@ async function login() {
     failureHandler('登录失败', res)
     return
   }
-  const { token } = await res.json()
-  accountStore.login(token)
+  const { token, account } = await res.json()
+  accountStore.login(token, account)
   router.push('/')
   username.value = ''
   password.value = ''
