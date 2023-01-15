@@ -28,23 +28,31 @@ async function login() {
 
 <template>
   <div
-    p-4
-    text-center
+    p-12 flex flex-col items-center
     space-y-4
   >
-    <ElInput
-      v-model="username"
-      placeholder="用户名"
-    />
-    <ElInput
-      v-model="password"
-      type="password"
-      placeholder="密码"
-      show-password
-    />
-    <ElButton @click="login">
-      登录
-    </ElButton>
+    <h1 text-xl font-bold>
+      登录 MiiXinn 账号
+    </h1>
+    <div w-64>
+      <ElInput
+        v-model="username"
+        placeholder="用户名"
+      />
+    </div>
+    <div w-64>
+      <ElInput
+        v-model="password"
+        type="password"
+        placeholder="密码"
+        show-password
+      />
+    </div>
+    <div>
+      <ElButton @click="login">
+        登录
+      </ElButton>
+    </div>
     <div
       text-sm
       opacity-75
