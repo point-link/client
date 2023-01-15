@@ -9,7 +9,26 @@ function logout() {
 </script>
 
 <template>
-  <div w-full h-full bg-gray-600>
-    S
+  <div
+    w-full h-full
+    flex flex-col
+    bg-gray-600 text-white
+  >
+    <div
+      px-1 py-4
+      flex-1
+      flex flex-col items-center
+    >
+      A
+    </div>
+    <div
+      px-1 py-4
+      flex-1
+      flex flex-col-reverse items-center
+    >
+      <button icon-btn mx-2 outline-none @click="logout">
+        <div i-carbon-exit />
+      </button>
+    </div>
   </div>
 </template>
