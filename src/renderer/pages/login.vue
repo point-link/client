@@ -4,8 +4,10 @@ import { useRouter } from 'vue-router'
 import { ElButton, ElInput } from 'element-plus'
 import { login as loginApi } from '~/api/account'
 import { failureHandler } from '~/utils/net'
+import { useAccountStore } from '~/stores/account'
 
 const router = useRouter()
+const accountStore = useAccountStore()
 
 const username = ref('')
 const password = ref('')
@@ -17,7 +19,7 @@ async function login() {
     return
   }
   const { token } = await res.json()
-  sessionStorage.setItem('token', token)
+  accountStore.login(token)
   router.push('/')
   username.value = ''
   password.value = ''

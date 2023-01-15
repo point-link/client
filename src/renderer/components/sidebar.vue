@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
+import { useAccountStore } from '~/stores/account'
+
 const router = useRouter()
+const accountStore = useAccountStore()
 
 function logout() {
-  sessionStorage.removeItem('token')
+  accountStore.logout()
   router.replace('/login')
 }
 </script>
