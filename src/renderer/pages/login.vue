@@ -20,7 +20,7 @@ async function login() {
   }
   const { token, account } = await res.json()
   accountStore.login(token, account)
-  router.push('/')
+  router.replace('/')
   username.value = ''
   password.value = ''
 }
@@ -57,9 +57,9 @@ async function login() {
       text-sm
       opacity-75
     >
-      <RouterLink hover:text-blue to="/signup">
+      <span hover:text-blue cursor-pointer @click="$router.replace('/signup')">
         注册
-      </RouterLink>
+      </span>
     </div>
   </div>
 </template>

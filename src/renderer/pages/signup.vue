@@ -17,7 +17,7 @@ async function signup() {
     return
   }
   successHandler('注册成功')
-  router.push('/login')
+  router.replace('/login')
   username.value = ''
   password.value = ''
 }

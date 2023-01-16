@@ -30,6 +30,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const accountStore = useAccountStore()
+  console.log(accountStore.uid)
+  console.log(accountStore.token)
+  console.log(accountStore.loggedIn)
   // 检查是否登录
   if (to.path === '/login' || to.path === '/signup' || accountStore.loggedIn)
     next()

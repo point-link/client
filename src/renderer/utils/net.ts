@@ -18,7 +18,7 @@ export function unauthorizedHandler(router: Router) {
     type: 'warning',
     duration: 1500,
   })
-  router.push('/login')
+  router.replace('/login')
 }
 
 export function failureHandler(message: string, res: Response | JsonResponse) {
