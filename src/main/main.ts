@@ -5,7 +5,9 @@ app.whenReady().then(() => {
   // 主窗口
   const mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 500,
+    minWidth: 800,
+    minHeight: 500,
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
       nodeIntegration: false,
