@@ -17,7 +17,7 @@ export async function login(username: string, password: string) {
 
 export async function signup(username: string, password: string) {
   password = hex(await sha256(password))
-  return jsonFetch<{ token: string }>(`${API_BASE_PATH}/account`, {
+  return fetch(`${API_BASE_PATH}/account/signup`, {
     method: 'POST',
     headers: { 'content-type': 'application/json; charset=UTF-8' },
     body: JSON.stringify({ username, password }),
