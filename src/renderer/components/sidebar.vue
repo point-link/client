@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { ElTooltip } from 'element-plus'
 import { useAccountStore } from '~/stores/account'
 import { DEFAULT_AVATAR } from '~/config'
@@ -21,7 +20,7 @@ const accountStore = useAccountStore()
     >
       <!-- 头像 -->
       <img
-        my-2
+        my-2 aspect-1
         :src="accountStore.avatar ? accountStore.avatar : DEFAULT_AVATAR"
         alt="头像"
       >

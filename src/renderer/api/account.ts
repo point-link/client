@@ -1,4 +1,4 @@
-import type { Account } from '~/typings/app'
+import type { Account, Friend } from '~/typings/app'
 import { hex, sha256 } from '~/utils/plain'
 import { jsonFetch } from '~/utils/net'
 import { API_BASE_PATH } from '~/config'
@@ -21,5 +21,15 @@ export async function signup(username: string, password: string) {
     method: 'POST',
     headers: { 'content-type': 'application/json; charset=UTF-8' },
     body: JSON.stringify({ username, password }),
+  })
+}
+
+export async function getFriends(token: string) {
+  return jsonFetch<Friend[]>(`${API_BASE_PATH}/friend`, {
+    method: 'GET',
+    headers: {
+      'content-type': 'application/json; charset=UTF-8',
+      'x-auth-token': token,
+    },
   })
 }

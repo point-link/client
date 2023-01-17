@@ -1,12 +1,12 @@
-import { type Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { Account } from '~/typings/app'
 
 export const useAccountStore = defineStore('account', () => {
-  const token: Ref<string | undefined> = ref()
-  const uid: Ref<number | undefined> = ref()
-  const avatar: Ref<string | undefined> = ref()
-  const nickname: Ref<string | undefined> = ref()
+  const token = ref<string | undefined>()
+  const uid = ref<number | undefined>()
+  const avatar = ref<string | undefined>()
+  const nickname = ref<string | undefined>()
   const loggedIn = ref(false)
 
   function login(tokenStr: string, account: Account) {
