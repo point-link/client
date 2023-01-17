@@ -20,7 +20,7 @@ async function login() {
   }
   const { token, account } = await res.json()
   accountStore.login(token, account)
-  router.replace('/')
+  router.replace('/main/chat')
   username.value = ''
   password.value = ''
 }

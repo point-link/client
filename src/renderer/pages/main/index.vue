@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import Sidebar from '~/components/sidebar.vue'
-import Contacts from '~/components/contacts.vue'
-import Chatroom from '~/components/chatroom.vue'
 </script>
 
 <template>
@@ -9,11 +7,8 @@ import Chatroom from '~/components/chatroom.vue'
     <div w-12>
       <Sidebar />
     </div>
-    <div w-48>
-      <Contacts />
-    </div>
     <div flex-grow>
-      <Chatroom />
+      <RouterView />
     </div>
   </div>
 </template>

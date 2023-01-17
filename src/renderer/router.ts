@@ -1,14 +1,31 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAccountStore } from '~/stores/account'
-import Index from '~/pages/index.vue'
 import Login from '~/pages/login.vue'
 import Signup from '~/pages/signup.vue'
+import Main from '~/pages/main/index.vue'
+import Chat from '~/pages/main/chat.vue'
+import FriendRequest from '~/pages/main/friend_request.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: Index,
+    redirect: '/main/chat',
+  },
+  {
+    path: '/main',
+    component: Main,
+    redirect: '/main/chat',
+    children: [
+      {
+        path: 'chat',
+        component: Chat,
+      },
+      {
+        path: 'friend_request',
+        component: FriendRequest,
+      },
+    ],
   },
   {
     path: '/login',
@@ -30,9 +47,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const accountStore = useAccountStore()
-  console.log(accountStore.uid)
-  console.log(accountStore.token)
-  console.log(accountStore.loggedIn)
   // 检查是否登录
   if (to.path === '/login' || to.path === '/signup' || accountStore.loggedIn)
     next()
