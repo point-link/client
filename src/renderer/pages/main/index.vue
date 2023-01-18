@@ -7,7 +7,7 @@ import Sidebar from '~/components/sidebar.vue'
     <div w-12>
       <Sidebar />
     </div>
-    <div flex-grow>
+    <div flex-grow overflow-auto>
       <RouterView />
     </div>
   </div>
