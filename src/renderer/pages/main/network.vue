@@ -13,22 +13,14 @@ const {
 </script>
 
 <template>
-  <div w-full h-full p-4 space-y-8>
-    <ElCard header="外部的IPv4">
-      <template v-if="exposedIpv4">
-        {{ exposedIpv4 }}{{ isRealIpv4 ? '' : ' （非本机IP）' }}
-      </template>
-      <template v-else>
-        无
-      </template>
-    </ElCard>
-    <ElCard header="外部的IPv6">
-      <template v-if="exposedIpv6">
-        {{ exposedIpv6 }}{{ isRealIpv6 ? '' : ' （非本机IP）' }}
-      </template>
-      <template v-else>
-        无
-      </template>
+  <div p-4 space-y-8>
+    <ElCard header="外部的IP">
+      <div>
+        IPv4: {{ exposedIpv4 ? `${exposedIpv4} （${isRealIpv4 ? '' : '非'}本机IP）` : '无' }}
+      </div>
+      <div>
+        IPv6: {{ exposedIpv6 ? `${exposedIpv6} （${isRealIpv6 ? '' : '非'}本机IP）` : '无' }}
+      </div>
     </ElCard>
     <ElCard header=" 本地网络接口">
       <div space-y-4>
