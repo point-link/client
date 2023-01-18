@@ -13,7 +13,7 @@ const {
 </script>
 
 <template>
-  <div p-4 space-y-8>
+  <div min-h-full p-4 space-y-8>
     <ElCard header="外部的IP">
       <div>
         IPv4: {{ exposedIpv4 ? `${exposedIpv4} （${isRealIpv4 ? '' : '非'}本机IP）` : '无' }}

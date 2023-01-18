@@ -10,10 +10,7 @@ const friendStore = useFriendStore()
 </script>
 
 <template>
-  <div
-    h-full w-full p-4
-    space-y-8
-  >
+  <div min-h-full p-4 space-y-8>
     <ElButton @click="router.replace('/main/friend_request_new')">
       添加好友
     </ElButton>

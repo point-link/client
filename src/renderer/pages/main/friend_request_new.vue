@@ -73,7 +73,7 @@ async function request() {
 </script>
 
 <template>
-  <div w-full h-full p-4 space-y-4>
+  <div min-h-full p-4 space-y-4>
     <div>
       <ElButton @click="router.replace('/main/friend_request')">
         返回

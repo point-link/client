@@ -4,7 +4,7 @@ import Chatroom from '~/components/chatroom.vue'
 </script>
 
 <template>
-  <div h-full w-full flex>
+  <div min-h-full flex>
     <div w-48>
       <FriendList />
     </div>
