@@ -42,6 +42,15 @@ const accountStore = useAccountStore()
           <div i-carbon-friendship />
         </button>
       </ElTooltip>
+      <!-- 网络 -->
+      <ElTooltip
+        content="网络"
+        placement="right"
+      >
+        <button icon-btn mx-2 outline-none @click="router.replace('/main/network')">
+          <div i-carbon-content-delivery-network />
+        </button>
+      </ElTooltip>
     </div>
     <div
       flex-1

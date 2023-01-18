@@ -7,6 +7,7 @@ import Main from '~/pages/main/index.vue'
 import Chat from '~/pages/main/chat.vue'
 import FriendRequest from '~/pages/main/friend_request.vue'
 import FriendRequestNew from '~/pages/main/friend_request_new.vue'
+import Network from '~/pages/main/network.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -29,6 +30,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'friend_request_new',
         component: FriendRequestNew,
+      },
+      {
+        path: 'network',
+        component: Network,
       },
     ],
   },
