@@ -33,3 +33,13 @@ export interface FriendRequest {
   status: FriendRequestStatus
   description?: string
 }
+
+export interface NetworkInterfaceInfo {
+  address: string
+  family: 'IPv4' | 'IPv6'
+}
+
+export interface NetworkInterface {
+  name: string
+  information: NetworkInterfaceInfo[]
+}

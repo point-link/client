@@ -1,10 +1,11 @@
-import * as Electron from 'electron';
+import { NetworkInterface } from './app'
 
 /**
  * Should match main/preload.ts for typescript support in renderer
  */
 export default interface ElectronApi {
-  ipcRenderer: Electron.IpcRenderer,
+  getExposedIpv4: () => Promise<string>,
+  getNetworkInterfaces: () => Promise<NetworkInterface[]>,
 }
 
 declare global {
