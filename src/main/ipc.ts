@@ -2,8 +2,8 @@ import os from 'node:os'
 import { ipcMain } from 'electron'
 import { getExposedIp } from './utils/net'
 
-ipcMain.handle('get-exposed-ipv4', async () => {
-  return await getExposedIp(4)
+ipcMain.handle('get-exposed-ip', async (event, family: 4 | 6) => {
+  return await getExposedIp(family)
 })
 
 ipcMain.handle('get-network-interfaces', () => {

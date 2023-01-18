@@ -8,7 +8,7 @@ export const useNetworkStore = defineStore('network', () => {
 
   async function refreshNetworkInfo() {
     networkInterfaces.value = await window.electron.getNetworkInterfaces()
-    exposedIpv4.value = await window.electron.getExposedIpv4()
+    exposedIpv4.value = await window.electron.getExposedIp(4)
   }
 
   // 初始化
