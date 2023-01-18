@@ -6,6 +6,7 @@ import Signup from '~/pages/signup.vue'
 import Main from '~/pages/main/index.vue'
 import Chat from '~/pages/main/chat.vue'
 import FriendRequest from '~/pages/main/friend_request.vue'
+import FriendRequestNew from '~/pages/main/friend_request_new.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,6 +25,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'friend_request',
         component: FriendRequest,
+      },
+      {
+        path: 'friend_request_new',
+        component: FriendRequestNew,
       },
     ],
   },

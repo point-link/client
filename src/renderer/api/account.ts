@@ -23,3 +23,7 @@ export async function signup(username: string, password: string) {
     body: JSON.stringify({ username, password }),
   })
 }
+
+export async function findAccount(uid: number) {
+  return jsonFetch<Account>(`${API_BASE_PATH}/account?uid=${uid}`)
+}
