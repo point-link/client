@@ -1,3 +1,3 @@
-# MiiXinn Client
+# PointLink Client
 
-This is the client of MiiXinn.
+This is the client of PointLink.

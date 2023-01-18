@@ -32,7 +32,7 @@ async function login() {
     space-y-4
   >
     <h1 text-xl font-bold>
-      登录 MiiXinn 账号
+      登录点联账号
     </h1>
     <div w-64>
       <ElInput
