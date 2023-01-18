@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useFriendStore } from '~/stores/friend'
-import { DEFAULT_AVATAR } from '~/config'
+import { DEFAULT_AVATAR_URL } from '~/config'
 
 const friendStore = useFriendStore()
 </script>
@@ -14,7 +14,7 @@ const friendStore = useFriendStore()
       <div>
         <img
           w-10 aspect-1
-          :src="friend.profile.avatar ? friend.profile.avatar : DEFAULT_AVATAR"
+          :src="friend.profile.avatar ? friend.profile.avatar : DEFAULT_AVATAR_URL"
           alt="头像"
         >
       </div>

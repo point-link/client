@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { ElTooltip } from 'element-plus'
 import { useAccountStore } from '~/stores/account'
-import { DEFAULT_AVATAR } from '~/config'
+import { DEFAULT_AVATAR_URL } from '~/config'
 
 const router = useRouter()
 const accountStore = useAccountStore()
@@ -21,7 +21,7 @@ const accountStore = useAccountStore()
       <!-- 头像 -->
       <img
         my-2 aspect-1
-        :src="accountStore.avatar ? accountStore.avatar : DEFAULT_AVATAR"
+        :src="accountStore.avatar ? accountStore.avatar : DEFAULT_AVATAR_URL"
         alt="头像"
       >
       <!-- 聊天 -->

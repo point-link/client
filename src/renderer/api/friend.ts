@@ -1,9 +1,9 @@
 import type { Friend, FriendRequest } from '~/typings/app'
 import { jsonFetch } from '~/utils/net'
-import { API_BASE_PATH } from '~/config'
+import { API_BASE_URL } from '~/config'
 
 export async function getFriends(token: string) {
-  return jsonFetch<Friend[]>(`${API_BASE_PATH}/friend`, {
+  return jsonFetch<Friend[]>(`${API_BASE_URL}/friend`, {
     method: 'GET',
     headers: { 'x-auth-token': token },
   })
@@ -14,14 +14,14 @@ export async function getFriendRequests(
   type: 'requester' | 'target',
   status: number,
 ) {
-  return jsonFetch<FriendRequest[]>(`${API_BASE_PATH}/friend_request?type=${type}&status=${status}`, {
+  return jsonFetch<FriendRequest[]>(`${API_BASE_URL}/friend_request?type=${type}&status=${status}`, {
     method: 'GET',
     headers: { 'x-auth-token': token },
   })
 }
 
 export async function postFriendRequest(token: string, targetUid: number) {
-  return fetch(`${API_BASE_PATH}/friend_request`, {
+  return fetch(`${API_BASE_URL}/friend_request`, {
     method: 'POST',
     headers: {
       'x-auth-token': token,
@@ -37,7 +37,7 @@ export async function putFriendRequestStatus(
   action: 'cancel' | 'agree' | 'reject',
   associatedUid: number,
 ) {
-  return jsonFetch<FriendRequest[]>(`${API_BASE_PATH}/friend_request?role=${role}&action=${action}&associatedUid=${associatedUid}`, {
+  return jsonFetch<FriendRequest[]>(`${API_BASE_URL}/friend_request?role=${role}&action=${action}&associatedUid=${associatedUid}`, {
     method: 'PUT',
     headers: { 'x-auth-token': token },
   })

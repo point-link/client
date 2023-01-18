@@ -1,1 +1,1 @@
-export const API_BASE_PATH = 'https://api.pointlink.top'
+export const API_BASE_URL = 'https://api.pointlink.top'

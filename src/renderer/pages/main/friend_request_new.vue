@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import type { Account } from '~/typings/app'
 import { findAccount } from '~/api/account'
 import { postFriendRequest } from '~/api/friend'
-import { DEFAULT_AVATAR } from '~/config'
+import { DEFAULT_AVATAR_URL } from '~/config'
 import { useAccountStore } from '~/stores/account'
 import { useFriendStore } from '~/stores/friend'
 
@@ -94,7 +94,7 @@ async function request() {
       <!-- 账号信息 -->
       <div pt-8 text-center space-y-2>
         <img
-          :src="account.profile.avatar ? account.profile.avatar : DEFAULT_AVATAR"
+          :src="account.profile.avatar ? account.profile.avatar : DEFAULT_AVATAR_URL"
           alt="头像"
           w-24 aspect-1
         >

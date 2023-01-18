@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { ElButton } from 'element-plus'
 import type { FriendRequest } from '~/typings/app'
-import { DEFAULT_AVATAR } from '~/config'
+import { DEFAULT_AVATAR_URL } from '~/config'
 import { useFriendStore } from '~/stores/friend'
 
 const props = defineProps<{
@@ -26,7 +26,7 @@ const updateStatus = computed(() => friendStore.updateFriendRequestStatus)
         <div>
           <img
             w-10 aspect-1
-            :src="associatedAccount.profile.avatar ? associatedAccount.profile.avatar : DEFAULT_AVATAR"
+            :src="associatedAccount.profile.avatar ? associatedAccount.profile.avatar : DEFAULT_AVATAR_URL"
             alt="头像"
           >
         </div>
