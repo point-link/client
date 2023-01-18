@@ -10,8 +10,10 @@ export const useNetworkStore = defineStore('network', () => {
       arr.push(...i.information.map(info => info.address))
     return arr
   })
+
   const exposedIpv4 = ref<string | undefined>()
   const exposedIpv6 = ref<string | undefined>()
+
   const isRealIpv4 = computed(() => {
     if (!exposedIpv4.value)
       return false

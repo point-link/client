@@ -36,7 +36,7 @@ export interface FriendRequest {
 
 export interface NetworkInterfaceInfo {
   address: string
-  family: 'IPv4' | 'IPv6'
+  family: 4 | 6
 }
 
 export interface NetworkInterface {

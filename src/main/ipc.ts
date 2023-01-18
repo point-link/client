@@ -1,5 +1,6 @@
 import os from 'node:os'
 import { ipcMain } from 'electron'
+import type { NetworkInterface, NetworkInterfaceInfo } from './typings/app'
 import { getExposedIp } from './utils/net'
 
 ipcMain.handle('get-exposed-ip', async (event, family: 4 | 6) => {
@@ -8,13 +9,13 @@ ipcMain.handle('get-exposed-ip', async (event, family: 4 | 6) => {
 
 ipcMain.handle('get-network-interfaces', () => {
   const interfaces = os.networkInterfaces()
-  const result: { name: string; information: { address: string; family: 'IPv4' | 'IPv6' }[] }[] = []
+  const result: NetworkInterface[] = []
   for (const name of Object.keys(interfaces)) {
     const information = interfaces[name]!
       .filter(i => !i.internal)
-      .map(i => ({
+      .map<NetworkInterfaceInfo>(i => ({
         address: i.address,
-        family: i.family,
+        family: i.family === 'IPv4' ? 4 : 6,
       }))
     if (information.length === 0)
       continue

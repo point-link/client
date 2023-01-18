@@ -13,6 +13,3 @@ const app = createApp(App)
 app.use(router)
 app.use(createPinia())
 app.mount('#app')
-
-console.log(await window.electron.getExposedIpv4())
-console.log(await window.electron.getNetworkInterfaces())

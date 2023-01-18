@@ -24,7 +24,7 @@ const {
     </ElCard>
     <ElCard header="外部的IPv6">
       <template v-if="exposedIpv6">
-        {{ isRealIpv6 }}{{ isRealIpv6 ? '' : ' （非本机IP）' }}
+        {{ exposedIpv6 }}{{ isRealIpv6 ? '' : ' （非本机IP）' }}
       </template>
       <template v-else>
         无
