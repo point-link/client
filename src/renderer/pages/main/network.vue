@@ -14,15 +14,17 @@ const {
 
 <template>
   <div min-h-full p-4 space-y-8>
-    <ElCard header="外部的IP">
-      <div>
-        IPv4: {{ exposedIpv4 ? `${exposedIpv4} （${isRealIpv4 ? '' : '非'}本机IP）` : '无' }}
-      </div>
-      <div>
-        IPv6: {{ exposedIpv6 ? `${exposedIpv6} （${isRealIpv6 ? '' : '非'}本机IP）` : '无' }}
+    <ElCard header="可用的公网IP">
+      <div space-y-1>
+        <div>
+          IPv4: {{ exposedIpv4 && isRealIpv4 ? exposedIpv4 : '无' }}
+        </div>
+        <div>
+          IPv6: {{ exposedIpv6 && isRealIpv6 ? exposedIpv6 : '无' }}
+        </div>
       </div>
     </ElCard>
-    <ElCard header=" 本地网络接口">
+    <ElCard header=" 本机网络接口">
       <div space-y-4>
         <div v-for="i of networkInterfaces" :key="i.name" space-y-1>
           <h2>
