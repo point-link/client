@@ -5,10 +5,10 @@ import { useNetworkStore } from '~/stores/network'
 
 const {
   networkInterfaces,
-  exposedIpv4,
-  exposedIpv6,
-  isRealIpv4,
-  isRealIpv6,
+  observedIpv4,
+  observedIpv6,
+  isPublicIpv4,
+  isPublicIpv6,
 } = storeToRefs(useNetworkStore())
 </script>
 
@@ -17,10 +17,10 @@ const {
     <ElCard header="可用的公网IP">
       <div space-y-1>
         <div>
-          IPv4: {{ exposedIpv4 && isRealIpv4 ? exposedIpv4 : '无' }}
+          IPv4: {{ observedIpv4 && isPublicIpv4 ? observedIpv4 : '无' }}
         </div>
         <div>
-          IPv6: {{ exposedIpv6 && isRealIpv6 ? exposedIpv6 : '无' }}
+          IPv6: {{ observedIpv6 && isPublicIpv6 ? observedIpv6 : '无' }}
         </div>
       </div>
     </ElCard>

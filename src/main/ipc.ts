@@ -1,10 +1,10 @@
 import os from 'node:os'
 import { ipcMain } from 'electron'
 import type { NetworkInterface, NetworkInterfaceInfo } from './typings/app'
-import { getExposedIp } from './utils/net'
+import { getObservedIp } from './utils/net'
 
-ipcMain.handle('get-exposed-ip', async (event, family: 4 | 6) => {
-  return await getExposedIp(family)
+ipcMain.handle('get-observed-ip', async (event, family: 4 | 6) => {
+  return await getObservedIp(family)
 })
 
 ipcMain.handle('get-network-interfaces', () => {
