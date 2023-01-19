@@ -27,8 +27,8 @@ const {
     <ElCard header=" 本机网络接口">
       <div space-y-4>
         <div v-for="i of networkInterfaces" :key="i.name" space-y-1>
-          <h2>
-            接口名：{{ i.name }}
+          <h2 font-bold>
+            {{ i.name }}
           </h2>
           <div v-for="info of i.information" :key="info.address" text-sm>
             {{ info.address }}
