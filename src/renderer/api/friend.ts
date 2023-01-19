@@ -37,8 +37,12 @@ export async function putFriendRequestStatus(
   action: 'cancel' | 'agree' | 'reject',
   associatedUid: number,
 ) {
-  return jsonFetch<FriendRequest[]>(`${API_BASE_URL}/friend_request?role=${role}&action=${action}&associatedUid=${associatedUid}`, {
+  return jsonFetch<FriendRequest[]>(`${API_BASE_URL}/friend_request/status`, {
     method: 'PUT',
-    headers: { 'x-auth-token': token },
+    headers: {
+      'x-auth-token': token,
+      'content-type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify({ role, action, associatedUid }),
   })
 }
