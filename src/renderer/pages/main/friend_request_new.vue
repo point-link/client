@@ -66,7 +66,7 @@ async function request() {
     throw new Error('当前页面的 submittedUid 值为空')
   const res = await postFriendRequest(accountStore.token, submittedUid.value)
   if (!res.ok)
-    throw new Error(`创建好友请求失败，相应状态：${res.status}`)
+    throw new Error(`创建好友请求失败，响应状态：${res.status}`)
   friendStore.refreshFriends()
   friendStore.refreshFriendRequests()
 }

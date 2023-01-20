@@ -8,6 +8,7 @@ import Chat from '~/pages/main/chat.vue'
 import FriendRequest from '~/pages/main/friend_request.vue'
 import FriendRequestNew from '~/pages/main/friend_request_new.vue'
 import Network from '~/pages/main/network.vue'
+import SelfProfile from '~/pages/main/self_profile.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -34,6 +35,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'network',
         component: Network,
+      },
+      {
+        path: 'self_profile',
+        component: SelfProfile,
       },
     ],
   },

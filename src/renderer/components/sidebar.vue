@@ -18,12 +18,18 @@ const accountStore = useAccountStore()
       flex-1
       flex flex-col items-center space-y-4
     >
-      <!-- 头像 -->
-      <img
-        my-2 aspect-1
-        :src="accountStore.avatar ? accountStore.avatar : DEFAULT_AVATAR_URL"
-        alt="头像"
+      <!-- 个人资料 -->
+      <ElTooltip
+        content="个人资料"
+        placement="right"
       >
+        <img
+          my-2 aspect-1 cursor-pointer
+          :src="accountStore.avatar ? accountStore.avatar : DEFAULT_AVATAR_URL"
+          alt="头像"
+          @click="router.replace('/main/self_profile')"
+        >
+      </ElTooltip>
       <!-- 聊天 -->
       <ElTooltip
         content="聊天"
