@@ -19,7 +19,7 @@ const friendStore = useFriendStore()
         >
       </div>
       <div>
-        {{ friend.username }}
+        {{ friend.profile.nickname || friend.username }}
       </div>
     </div>
   </div>

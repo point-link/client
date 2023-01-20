@@ -31,7 +31,7 @@ const updateStatus = computed(() => friendStore.updateFriendRequestStatus)
           >
         </div>
         <div>
-          {{ associatedAccount.username }}
+          {{ associatedAccount.profile.nickname || associatedAccount.username }}
         </div>
       </div>
       <div v-if="fr.description">
