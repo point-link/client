@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { ElTooltip } from 'element-plus'
 import { useAccountStore } from '~/stores/account'
 import { DEFAULT_AVATAR_URL } from '~/config'
 
 const router = useRouter()
 const accountStore = useAccountStore()
+
+const { profile } = storeToRefs(accountStore)
 </script>
 
 <template>
@@ -25,7 +28,7 @@ const accountStore = useAccountStore()
       >
         <img
           my-2 aspect-1 cursor-pointer
-          :src="accountStore.avatar ? accountStore.avatar : DEFAULT_AVATAR_URL"
+          :src="profile.avatar ? profile.avatar : DEFAULT_AVATAR_URL"
           alt="头像"
           @click="router.replace('/main/self_profile')"
         >

@@ -1,23 +1,21 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import type { Account } from '~/typings/app'
+import type { Account, Profile } from '~/typings/app'
 import { findAccount } from '~/api/account'
 
 export const useAccountStore = defineStore('account', () => {
   const token = ref<string | undefined>()
   const uid = ref<number | undefined>()
   const username = ref<string | undefined>()
-  const avatar = ref<string | undefined>()
-  const nickname = ref<string | undefined>()
+  const profile = ref<Profile>({})
   const loggedIn = ref(false)
 
   function login(tokenStr: string, account: Account) {
     token.value = tokenStr
     uid.value = account.uid
     username.value = account.username
-    avatar.value = account.profile.avatar
-    nickname.value = account.profile.nickname
+    profile.value = account.profile
     loggedIn.value = true
   }
 
@@ -25,8 +23,7 @@ export const useAccountStore = defineStore('account', () => {
     token.value = undefined
     uid.value = undefined
     username.value = undefined
-    avatar.value = undefined
-    nickname.value = undefined
+    profile.value = {}
     loggedIn.value = false
   }
 
@@ -37,16 +34,14 @@ export const useAccountStore = defineStore('account', () => {
     if (!res.ok)
       throw new Error(`刷新个人资料失败，响应状态：${res.status}`)
     const account = await res.json()
-    avatar.value = account.profile.avatar
-    nickname.value = account.profile.nickname
+    profile.value = account.profile
   }
 
   return {
     token,
     uid,
     username,
-    avatar,
-    nickname,
+    profile,
     loggedIn,
     login,
     logout,
