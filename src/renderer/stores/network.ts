@@ -25,16 +25,29 @@ export const useNetworkStore = defineStore('network', () => {
     return localIps.value.includes(observedIpv6.value)
   })
 
-  async function refreshNetworkInfo() {
+  async function refreshNetworkInterfaces() {
     networkInterfaces.value = await window.electron.getNetworkInterfaces()
+  }
+
+  async function refreshObservedIp() {
     observedIpv4.value = await window.electron.getObservedIp(4)
     observedIpv6.value = await window.electron.getObservedIp(6)
   }
 
   // 初始化
-  refreshNetworkInfo()
-  // 定时刷新（10s）
-  setInterval(refreshNetworkInfo, 10000)
+  refreshNetworkInterfaces()
+  refreshObservedIp()
+  // 定时刷新接口数据
+  let prevInterfaces = JSON.stringify(networkInterfaces.value)
+  setInterval(async () => {
+    await refreshNetworkInterfaces()
+    const currentInterfaces = JSON.stringify(networkInterfaces.value)
+    // 当接口变化时刷新 observedIp
+    if (prevInterfaces !== currentInterfaces) {
+      prevInterfaces = currentInterfaces
+      await refreshObservedIp()
+    }
+  }, 5000)
 
   return {
     networkInterfaces,
@@ -43,6 +56,7 @@ export const useNetworkStore = defineStore('network', () => {
     observedIpv6,
     isPublicIpv4,
     isPublicIpv6,
-    refreshNetworkInfo,
+    refreshNetworkInterfaces,
+    refreshObservedIp,
   }
 })
