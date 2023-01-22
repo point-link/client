@@ -1,5 +1,6 @@
 import type { Router } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { API_WS_URL } from '~/config'
 
 interface JsonResponse<T = unknown> extends Omit<Response, 'arrayBuffer' | 'blob' | 'formData' | 'text'> {
   json(): Promise<T>
@@ -36,4 +37,8 @@ export function successHandler(message: string) {
     type: 'success',
     duration: 1500,
   })
+}
+
+export function createWs(token: string) {
+  return new WebSocket(`${API_WS_URL}?auth_token=${token}`)
 }
