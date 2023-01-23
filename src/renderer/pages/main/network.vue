@@ -4,6 +4,7 @@ import { ElCard } from 'element-plus'
 import { useNetworkStore } from '~/stores/network'
 
 const {
+  messageServerPort,
   networkInterfaces,
   observedIpv4,
   observedIpv6,
@@ -22,6 +23,11 @@ const {
         <div>
           IPv6: {{ observedIpv6 && isPublicIpv6 ? observedIpv6 : '无' }}
         </div>
+      </div>
+    </ElCard>
+    <ElCard header="消息端口">
+      <div>
+        {{ messageServerPort }}
       </div>
     </ElCard>
     <ElCard header=" 本机网络接口">

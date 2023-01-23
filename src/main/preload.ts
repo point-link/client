@@ -7,4 +7,7 @@ contextBridge.exposeInMainWorld('electron', {
   async getNetworkInterfaces() {
     return await ipcRenderer.invoke('get-network-interfaces')
   },
+  async getMessageServerPort() {
+    return await ipcRenderer.invoke('get-message-server-port')
+  },
 })

@@ -6,6 +6,7 @@ import { NetworkInterface } from './app'
 export default interface ElectronApi {
   getObservedIp: (family: 4 | 6) => Promise<string>,
   getNetworkInterfaces: () => Promise<NetworkInterface[]>,
+  getMessageServerPort: () => Promise<number>,
 }
 
 declare global {

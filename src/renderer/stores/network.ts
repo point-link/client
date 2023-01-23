@@ -7,6 +7,7 @@ import type { NetworkInterface } from '~/typings/app'
 export const useNetworkStore = defineStore('network', () => {
   const accountStore = useAccountStore()
 
+  const messageServerPort = ref<number | undefined>()
   const networkInterfaces = ref<NetworkInterface[]>([])
   const localIps = computed(() => {
     const arr: string[] = []
@@ -41,6 +42,8 @@ export const useNetworkStore = defineStore('network', () => {
   // 初始化
   refreshNetworkInterfaces()
   refreshObservedIp()
+  window.electron.getMessageServerPort()
+    .then(port => messageServerPort.value = port)
   // 定时刷新接口数据
   let prevInterfaces = JSON.stringify(networkInterfaces.value)
   setInterval(async () => {
@@ -62,11 +65,13 @@ export const useNetworkStore = defineStore('network', () => {
         type: 'network',
         ipv4: isPublicIpv4.value ? observedIpv4.value : null,
         ipv6: isPublicIpv6.value ? observedIpv6.value : null,
+        port: messageServerPort.value ? messageServerPort.value : null,
       }))
     }
   }, 5000)
 
   return {
+    messageServerPort,
     networkInterfaces,
     localIps,
     observedIpv4,

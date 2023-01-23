@@ -1,7 +1,9 @@
 import os from 'node:os'
 import { ipcMain } from 'electron'
+
 import type { NetworkInterface, NetworkInterfaceInfo } from './typings/app'
 import { getObservedIp } from './utils/net'
+import { port } from './channel/server'
 
 ipcMain.handle('get-observed-ip', async (event, family: 4 | 6) => {
   return await getObservedIp(family)
@@ -25,4 +27,8 @@ ipcMain.handle('get-network-interfaces', () => {
     })
   }
   return result
+})
+
+ipcMain.handle('get-message-server-port', () => {
+  return port
 })
