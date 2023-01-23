@@ -1,5 +1,4 @@
 import { createServer } from 'node:net'
-import { createDecipheriv } from 'node:crypto'
 
 const server = createServer((socket) => {
   socket.on('error', (err) => {
@@ -7,13 +6,7 @@ const server = createServer((socket) => {
   })
 
   socket.on('data', (data) => {
-    console.log('socket', new Uint8Array(data))
-  })
-
-  const decipher = createDecipheriv('aes-256-gcm', new Uint8Array(32), new Uint8Array(16))
-  socket.pipe(decipher)
-  decipher.on('data', (data) => {
-    console.log('decipher', new Uint8Array(data))
+    console.log('data', new Uint8Array(data))
   })
 })
 

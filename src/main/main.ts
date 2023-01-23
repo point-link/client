@@ -1,6 +1,7 @@
 import { join } from 'path'
 import { BrowserWindow, Menu, app, globalShortcut, session } from 'electron'
 import './ipc'
+import './message/server'
 
 app.whenReady().then(() => {
   // 主窗口

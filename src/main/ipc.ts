@@ -3,7 +3,7 @@ import { ipcMain } from 'electron'
 
 import type { NetworkInterface, NetworkInterfaceInfo } from './typings/app'
 import { getObservedIp } from './utils/net'
-import { port } from './channel/server'
+import { port } from './message/server'
 
 ipcMain.handle('get-observed-ip', async (event, family: 4 | 6) => {
   return await getObservedIp(family)
