@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+
+import { useAccountStore } from './account'
 import type { NetworkInterface } from '~/typings/app'
 
 export const useNetworkStore = defineStore('network', () => {
+  const accountStore = useAccountStore()
+
   const networkInterfaces = ref<NetworkInterface[]>([])
   const localIps = computed(() => {
     const arr: string[] = []
@@ -46,6 +50,19 @@ export const useNetworkStore = defineStore('network', () => {
     if (prevInterfaces !== currentInterfaces) {
       prevInterfaces = currentInterfaces
       await refreshObservedIp()
+    }
+  }, 5000)
+
+  // 定时通过 WebSocket 向服务器发送网络信息
+  setInterval(() => {
+    if (!accountStore.ws)
+      return
+    if (accountStore.ws.readyState === WebSocket.OPEN) {
+      accountStore.ws.send(JSON.stringify({
+        type: 'network',
+        ipv4: isPublicIpv4.value ? observedIpv4.value : null,
+        ipv6: isPublicIpv6.value ? observedIpv6.value : null,
+      }))
     }
   }, 5000)
 
