@@ -1,11 +1,4 @@
-import Koa from 'koa'
-
-const app = new Koa()
-
-app.use((ctx) => {
-  console.log(ctx.request)
-  ctx.body = 'Hello'
-})
+import app from './app'
 
 function listen() {
   const errors: unknown[] = []
@@ -23,4 +16,4 @@ function listen() {
   throw new Error('无法启动消息服务器')
 }
 
-export const port = listen()
+export const MESSAGE_SERVER_PORT = listen()
