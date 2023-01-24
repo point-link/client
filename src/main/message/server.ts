@@ -1,24 +1,26 @@
-import { createServer } from 'node:net'
+import Koa from 'koa'
 
-const server = createServer((socket) => {
-  socket.on('error', (err) => {
-    console.log(err)
-  })
+const app = new Koa()
 
-  socket.on('data', (data) => {
-    console.log('data', new Uint8Array(data))
-  })
+app.use((ctx) => {
+  console.log(ctx.request)
+  ctx.body = 'Hello'
 })
 
 function listen() {
-  while (true) {
+  const errors: unknown[] = []
+  for (let i = 0; i < 10; i++) {
     try {
       const port = 10000 + Math.floor(Math.random() * 55535)
-      server.listen(port)
+      app.listen(port)
       return port
     }
-    catch (err) {}
+    catch (err) {
+      errors.push(err)
+    }
   }
+  console.error(errors)
+  throw new Error('无法启动消息服务器')
 }
 
 export const port = listen()
