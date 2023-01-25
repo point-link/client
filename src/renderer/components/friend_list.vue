@@ -6,7 +6,7 @@ const friendStore = useFriendStore()
 </script>
 
 <template>
-  <div w-full h-full bg-gray-200>
+  <div w-full h-full bg-gray-100 border-r-1>
     <div
       v-for="friend of friendStore.friends" :key="friend.uid"
       p-2 flex items-center
