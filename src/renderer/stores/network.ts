@@ -85,6 +85,8 @@ export const useNetworkStore = defineStore('network', () => {
     observedIpv6,
     isPublicIpv4,
     isPublicIpv6,
+    networkInfo,
+    refreshMessageServerPort,
     refreshNetworkInterfaces,
     refreshObservedIp,
   }

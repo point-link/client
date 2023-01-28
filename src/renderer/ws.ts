@@ -11,7 +11,7 @@ function setupWs(ws: WebSocket) {
     console.error(event)
   })
   ws.addEventListener('message', (event) => {
-    console.log(event)
+    console.log(event.data)
   })
 }
 

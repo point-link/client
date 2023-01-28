@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 import type { Account, Profile } from '~/typings/app'
 import { findAccount } from '~/api/account'
+import { useNetworkStore } from '~/stores/network'
 import { closeWs, getWs, openWs } from '~/ws'
 
 export const useAccountStore = defineStore('account', () => {
@@ -22,7 +23,10 @@ export const useAccountStore = defineStore('account', () => {
     const ws = openWs(token.value)
     let heartbeatInterval = -1
     ws.addEventListener('open', () => {
-      ws.send('{"type":"action","action":"login"}')
+      ws.send(JSON.stringify({
+        type: 'login',
+        ...useNetworkStore().networkInfo,
+      }))
       ws.send('{"type":"heartbeat"}')
       heartbeatInterval = setInterval(() => {
         ws.send('{"type":"heartbeat"}')
@@ -40,7 +44,7 @@ export const useAccountStore = defineStore('account', () => {
     profile.value = {}
     loggedIn.value = false
     // 关闭 ws
-    getWs()?.send('{"type":"action","action":"logout"}')
+    getWs()?.send('{"type":"logout"}')
     closeWs()
   }
 
