@@ -1,12 +1,10 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-import { useAccountStore } from './account'
 import type { NetworkInterface } from '~/typings/app'
+import { getWs, onWsOpen } from '~/ws'
 
 export const useNetworkStore = defineStore('network', () => {
-  const accountStore = useAccountStore()
-
   const messageServerPort = ref<number | undefined>()
   const networkInterfaces = ref<NetworkInterface[]>([])
   const localIps = computed(() => {
@@ -15,10 +13,8 @@ export const useNetworkStore = defineStore('network', () => {
       arr.push(...i.information.map(info => info.address))
     return arr
   })
-
   const observedIpv4 = ref<string | undefined>()
   const observedIpv6 = ref<string | undefined>()
-
   const isPublicIpv4 = computed(() => {
     if (!observedIpv4.value)
       return false
@@ -29,6 +25,15 @@ export const useNetworkStore = defineStore('network', () => {
       return false
     return localIps.value.includes(observedIpv6.value)
   })
+  const networkInfo = computed(() => ({
+    ipv4: isPublicIpv4.value ? (observedIpv4.value ? observedIpv4.value : null) : null,
+    ipv6: isPublicIpv6.value ? (observedIpv6.value ? observedIpv6.value : null) : null,
+    port: messageServerPort.value ? messageServerPort.value : null,
+  }))
+
+  async function refreshMessageServerPort() {
+    messageServerPort.value = await window.electron.getMessageServerPort()
+  }
 
   async function refreshNetworkInterfaces() {
     networkInterfaces.value = await window.electron.getNetworkInterfaces()
@@ -40,35 +45,39 @@ export const useNetworkStore = defineStore('network', () => {
   }
 
   // 初始化
+  refreshMessageServerPort()
   refreshNetworkInterfaces()
   refreshObservedIp()
-  window.electron.getMessageServerPort()
-    .then(port => messageServerPort.value = port)
-  // 定时刷新接口数据
+  onWsOpen((ws) => {
+    ws.send(JSON.stringify({
+      type: 'network',
+      ...networkInfo.value,
+    }))
+  })
+
+  // 每 2s 刷新 networkInterfaces
   let prevInterfaces = JSON.stringify(networkInterfaces.value)
+  let prevNetworkInfo = JSON.stringify(networkInfo.value)
   setInterval(async () => {
     await refreshNetworkInterfaces()
+    // 当 networkInterfaces 变化时刷新 observedIp
     const currentInterfaces = JSON.stringify(networkInterfaces.value)
-    // 当接口变化时刷新 observedIp
-    if (prevInterfaces !== currentInterfaces) {
-      prevInterfaces = currentInterfaces
-      await refreshObservedIp()
-    }
-  }, 5000)
-
-  // 定时通过 WebSocket 向服务器发送网络信息
-  setInterval(() => {
-    if (!accountStore.ws)
+    console.log(prevInterfaces, currentInterfaces, prevInterfaces === currentInterfaces)
+    if (prevInterfaces === currentInterfaces)
       return
-    if (accountStore.ws.readyState === WebSocket.OPEN) {
-      accountStore.ws.send(JSON.stringify({
-        type: 'network',
-        ipv4: isPublicIpv4.value ? observedIpv4.value : null,
-        ipv6: isPublicIpv6.value ? observedIpv6.value : null,
-        port: messageServerPort.value ? messageServerPort.value : null,
-      }))
-    }
-  }, 5000)
+    prevInterfaces = currentInterfaces
+    await refreshObservedIp()
+    // 当 observedIp 变化时通过 ws 发送新的网络信息
+    const currentNetworkInfo = JSON.stringify(networkInfo.value)
+    console.log(prevNetworkInfo, currentNetworkInfo, prevNetworkInfo === currentNetworkInfo)
+    if (prevNetworkInfo === currentNetworkInfo)
+      return
+    prevNetworkInfo = currentNetworkInfo
+    getWs()?.send(JSON.stringify({
+      type: 'network',
+      ...networkInfo.value,
+    }))
+  }, 2000)
 
   return {
     messageServerPort,

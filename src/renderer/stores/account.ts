@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 import type { Account, Profile } from '~/typings/app'
 import { findAccount } from '~/api/account'
-import { createWs } from '~/utils/net'
+import { closeWs, getWs, openWs } from '~/ws'
 
 export const useAccountStore = defineStore('account', () => {
   const token = ref<string | undefined>()
@@ -11,7 +11,6 @@ export const useAccountStore = defineStore('account', () => {
   const username = ref<string | undefined>()
   const profile = ref<Profile>({})
   const loggedIn = ref(false)
-  const ws = ref<WebSocket | undefined>()
 
   function login(tokenStr: string, account: Account) {
     token.value = tokenStr
@@ -19,28 +18,19 @@ export const useAccountStore = defineStore('account', () => {
     username.value = account.username
     profile.value = account.profile
     loggedIn.value = true
-    // 设置 WebSocket
-    const socket = createWs(token.value)
-    let heartbeatInterval = 0
-    socket.onopen = () => {
-      socket.send('{"type":"action","action":"login"}')
-      socket.send('{"type":"heartbeat"}')
-      // 每 10s 发送一次心跳包
+    // 通过 ws 发送登录消息和心跳消息
+    const ws = openWs(token.value)
+    let heartbeatInterval = -1
+    ws.addEventListener('open', () => {
+      ws.send('{"type":"action","action":"login"}')
+      ws.send('{"type":"heartbeat"}')
       heartbeatInterval = setInterval(() => {
-        socket.send('{"type":"heartbeat"}')
+        ws.send('{"type":"heartbeat"}')
       }, 10000)
-    }
-    socket.onclose = () => {
-      ws.value = undefined
+    })
+    ws.addEventListener('close', () => {
       clearInterval(heartbeatInterval)
-    }
-    socket.onerror = (event) => {
-      console.log(event)
-    }
-    socket.onmessage = (event) => {
-      console.log(event)
-    }
-    ws.value = socket
+    })
   }
 
   function logout() {
@@ -49,9 +39,9 @@ export const useAccountStore = defineStore('account', () => {
     username.value = undefined
     profile.value = {}
     loggedIn.value = false
-    ws.value?.send('{"type":"action","action":"logout"}')
-    ws.value?.close()
-    ws.value = undefined
+    // 关闭 ws
+    getWs()?.send('{"type":"action","action":"logout"}')
+    closeWs()
   }
 
   async function refreshAccountProfile() {
@@ -70,7 +60,6 @@ export const useAccountStore = defineStore('account', () => {
     username,
     profile,
     loggedIn,
-    ws,
     login,
     logout,
     refreshAccountProfile,
