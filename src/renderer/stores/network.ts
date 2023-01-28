@@ -62,14 +62,12 @@ export const useNetworkStore = defineStore('network', () => {
     await refreshNetworkInterfaces()
     // 当 networkInterfaces 变化时刷新 observedIp
     const currentInterfaces = JSON.stringify(networkInterfaces.value)
-    console.log(prevInterfaces, currentInterfaces, prevInterfaces === currentInterfaces)
     if (prevInterfaces === currentInterfaces)
       return
     prevInterfaces = currentInterfaces
     await refreshObservedIp()
     // 当 observedIp 变化时通过 ws 发送新的网络信息
     const currentNetworkInfo = JSON.stringify(networkInfo.value)
-    console.log(prevNetworkInfo, currentNetworkInfo, prevNetworkInfo === currentNetworkInfo)
     if (prevNetworkInfo === currentNetworkInfo)
       return
     prevNetworkInfo = currentNetworkInfo
