@@ -1,15 +1,16 @@
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
 import { useFriendStore } from '~/stores/friend'
 import { DEFAULT_AVATAR_URL } from '~/config'
 
-const friendStore = useFriendStore()
+const { friends } = storeToRefs(useFriendStore())
 </script>
 
 <template>
   <div w-full h-full bg-gray-100 border-r-1>
     <div
-      v-for="friend of friendStore.friends" :key="friend.uid"
-      p-2 flex items-center
+      v-for="friend of friends" :key="friend.uid"
+      p-2 flex items-center space-x-2
     >
       <div>
         <img
