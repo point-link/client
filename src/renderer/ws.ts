@@ -1,4 +1,7 @@
 import { API_WS_URL } from '~/config'
+import type { WsInData } from '~/typings/app'
+import { syncIgnoreError } from '~/utils/plain'
+import { useFriendStore } from '~/stores/friend'
 
 type OnWsOpenCallback = (ws: WebSocket) => void
 
@@ -11,7 +14,27 @@ function setupWs(ws: WebSocket) {
     console.error(event)
   })
   ws.addEventListener('message', (event) => {
-    console.log(event.data)
+    if (typeof event.data === 'string') {
+      const data = syncIgnoreError(() => JSON.parse(event.data) as WsInData)
+      if (!data) {
+        console.error('收到非 JSON 格式的文本 WebSocket 消息')
+        return
+      }
+      const friendStore = useFriendStore()
+      switch (data.type) {
+        case 'friend-login':
+          friendStore.addOnlineClient({
+            uid: data.uid,
+            ipv4: data.ipv4,
+            ipv6: data.ipv6,
+            port: data.port,
+          })
+          break
+        case 'friend-logout':
+          friendStore.removeOnlineClient(data.uid)
+          break
+      }
+    }
   })
 }
 

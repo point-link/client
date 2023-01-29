@@ -1,9 +1,16 @@
-import type { Friend, FriendRequest } from '~/typings/app'
+import type { Client, Friend, FriendRequest } from '~/typings/app'
 import { jsonFetch } from '~/utils/net'
 import { API_BASE_URL } from '~/config'
 
 export async function getFriends(token: string) {
   return jsonFetch<Friend[]>(`${API_BASE_URL}/friend`, {
+    method: 'GET',
+    headers: { 'x-auth-token': token },
+  })
+}
+
+export async function getFriendOnlineClients(token: string) {
+  return jsonFetch<Client[]>(`${API_BASE_URL}/friend/online_client`, {
     method: 'GET',
     headers: { 'x-auth-token': token },
   })

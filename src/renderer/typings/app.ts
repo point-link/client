@@ -18,6 +18,13 @@ export interface Friend {
   profile: Profile
 }
 
+export interface Client {
+  uid: number
+  ipv4: string | null
+  ipv6: string | null
+  port: number | null
+}
+
 /**
  * 好友请求的状态。
  * 1：等待，
@@ -43,3 +50,18 @@ export interface NetworkInterface {
   name: string
   information: NetworkInterfaceInfo[]
 }
+
+export interface FriendLoginWsInData {
+  type: 'friend-login'
+  uid: number
+  ipv4: string | null
+  ipv6: string | null
+  port: number | null
+}
+
+export interface FriendLogoutWsInData {
+  type: 'friend-logout'
+  uid: number
+}
+
+export type WsInData = FriendLoginWsInData | FriendLogoutWsInData

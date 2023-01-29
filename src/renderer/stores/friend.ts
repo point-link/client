@@ -1,8 +1,13 @@
 import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useAccountStore } from './account'
-import { getFriendRequests, getFriends, putFriendRequestStatus } from '~/api/friend'
-import type { Friend, FriendRequest } from '~/typings/app'
+import {
+  getFriendOnlineClients,
+  getFriendRequests,
+  getFriends,
+  putFriendRequestStatus,
+} from '~/api/friend'
+import type { Client, Friend, FriendRequest } from '~/typings/app'
 
 export const useFriendStore = defineStore('friend', () => {
   const accountStore = useAccountStore()
@@ -11,6 +16,17 @@ export const useFriendStore = defineStore('friend', () => {
   const friends = ref<Friend[]>([])
   const friendRequestsAsRequester = ref<FriendRequest[]>([])
   const friendRequestsAsTarget = ref<FriendRequest[]>([])
+  const friendOnlineClients = ref<Record<number, Client | undefined>>({})
+
+  function addOnlineClient(client: Client) {
+    friendOnlineClients.value[client.uid] = client
+  }
+
+  function removeOnlineClient(uid: number) {
+    const c = friendOnlineClients.value[uid]
+    friendOnlineClients.value[uid] = undefined
+    return !!c
+  }
 
   async function refreshFriends() {
     if (!token.value) {
@@ -39,6 +55,19 @@ export const useFriendStore = defineStore('friend', () => {
     friendRequestsAsTarget.value = await res2.json()
   }
 
+  async function refreshFriendOnlineClients() {
+    if (!token.value) {
+      friendOnlineClients.value = {}
+      return
+    }
+    const res = await getFriendOnlineClients(token.value)
+    if (!res.ok)
+      throw new Error(`获取在线好友客户端信息失败，响应状态：${res.status}`)
+    const clients = await res.json()
+    for (const c of clients)
+      addOnlineClient(c)
+  }
+
   async function updateFriendRequestStatus(
     role: 'requester' | 'target',
     action: 'cancel' | 'agree' | 'reject',
@@ -57,6 +86,7 @@ export const useFriendStore = defineStore('friend', () => {
   watch(token, () => {
     refreshFriends()
     refreshFriendRequests()
+    refreshFriendOnlineClients()
   }, {
     immediate: true,
   })
@@ -65,8 +95,12 @@ export const useFriendStore = defineStore('friend', () => {
     friends,
     friendRequestsAsRequester,
     friendRequestsAsTarget,
+    friendOnlineClients,
+    addOnlineClient,
+    removeOnlineClient,
     refreshFriends,
     refreshFriendRequests,
+    refreshFriendOnlineClients,
     updateFriendRequestStatus,
   }
 })
