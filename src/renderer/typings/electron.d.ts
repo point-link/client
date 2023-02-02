@@ -7,6 +7,7 @@ export default interface ElectronApi {
   getObservedIp: (family: 4 | 6) => Promise<string>,
   getNetworkInterfaces: () => Promise<NetworkInterface[]>,
   getMessageServerPort: () => Promise<number>,
+  setNewTextMessageHandler: (handler: (from: number, to: number, textMsg: string) => void) => Promise<void>,
 }
 
 declare global {

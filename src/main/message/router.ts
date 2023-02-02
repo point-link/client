@@ -1,4 +1,5 @@
 import Router from '@koa/router'
+import { sendNewTextMessageToMainWindow } from '../ipc'
 
 const router = new Router()
 
@@ -6,7 +7,7 @@ router.get('/hello', (ctx) => {
   ctx.body = 'hello'
 })
 
-router.post('/message/text', (ctx) => {
+router.post('/message/text', async (ctx) => {
   // 获取参数
   const _from = ctx.headers['x-from']
   const from = Number(_from)
@@ -26,6 +27,7 @@ router.post('/message/text', (ctx) => {
     return
   }
   // 响应
+  await sendNewTextMessageToMainWindow(from, to, textMsg)
   ctx.status = 200
 })
 

@@ -10,4 +10,9 @@ contextBridge.exposeInMainWorld('electron', {
   async getMessageServerPort() {
     return await ipcRenderer.invoke('get-message-server-port')
   },
+  async setNewTextMessageHandler(handler: (from: number, to: number, textMsg: string) => void) {
+    ipcRenderer.on('new-text-message', (event, from, to, textMsg) => {
+      handler(from, to, textMsg)
+    })
+  },
 })

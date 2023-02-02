@@ -2,6 +2,7 @@ import os from 'node:os'
 import { ipcMain } from 'electron'
 
 import type { NetworkInterface, NetworkInterfaceInfo } from './typings/app'
+import { mainWindowPromise } from './main'
 import { getObservedIp } from './utils/net'
 import { MESSAGE_SERVER_PORT } from './message/server'
 
@@ -32,3 +33,8 @@ ipcMain.handle('get-network-interfaces', () => {
 ipcMain.handle('get-message-server-port', () => {
   return MESSAGE_SERVER_PORT
 })
+
+export async function sendNewTextMessageToMainWindow(from: number, to: number, textMsg: string) {
+  const mainWindow = await mainWindowPromise
+  mainWindow.webContents.send('new-text-message', from, to, textMsg)
+}

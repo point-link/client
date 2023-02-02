@@ -3,7 +3,9 @@ import { BrowserWindow, Menu, app, globalShortcut, session } from 'electron'
 import './ipc'
 import './message/server'
 
-app.whenReady().then(() => {
+async function start() {
+  await app.whenReady()
+
   // 主窗口
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -16,6 +18,8 @@ app.whenReady().then(() => {
       contextIsolation: true,
     },
   })
+
+  // 渲染器入口
   if (process.env.NODE_ENV === 'development') {
     const rendererPort = process.argv[2]
     mainWindow.loadURL(`http://localhost:${rendererPort}`)
@@ -41,9 +45,14 @@ app.whenReady().then(() => {
   globalShortcut.register('Alt+D', () => {
     mainWindow.webContents.toggleDevTools()
   })
-})
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin')
-    app.quit()
-})
+  // 监听退出事件
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin')
+      app.quit()
+  })
+
+  return mainWindow
+}
+
+export const mainWindowPromise = start()
