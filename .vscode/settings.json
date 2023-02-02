@@ -4,6 +4,7 @@
   },
   "unocss.root": "src/renderer",
   "cSpell.words": [
+    "bodyparser",
     "pointlink"
   ]
 }
