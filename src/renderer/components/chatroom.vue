@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ElButton, ElMessage } from 'element-plus'
-import { ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useChatStore } from '~/stores/chat'
@@ -8,12 +8,29 @@ import { useAccountStore } from '~/stores/account'
 import { useFriendStore } from '~/stores/friend'
 import { useNetworkStore } from '~/stores/network'
 import { DISPLAY_MODE_ENABLE } from '~/config'
+import MessageComponent from '~/components/message.vue'
 
-const text = ref('')
-const { selectedFriend } = storeToRefs(useChatStore())
+let messageContainer: HTMLDivElement
+
+const chatStore = useChatStore()
+const { selectedFriend, selectedMessages } = storeToRefs(chatStore)
 const { uid } = storeToRefs(useAccountStore())
 const { friendOnlineClients } = storeToRefs(useFriendStore())
 const { networkInfo } = storeToRefs(useNetworkStore())
+
+const text = ref('')
+const textMap = new Map<number, string>()
+
+watch(text, (value) => {
+  if (!selectedFriend.value)
+    return
+  textMap.set(selectedFriend.value.uid, value)
+})
+watch(selectedFriend, (friend) => {
+  if (!friend)
+    return
+  text.value = textMap.get(friend.uid) || ''
+})
 
 async function postTextMsgApi(hostAndPort: string, to: number, textMsg: string) {
   return await fetch(`http://${hostAndPort}/message/text`, {
@@ -28,10 +45,12 @@ async function postTextMsgApi(hostAndPort: string, to: number, textMsg: string) 
 }
 
 async function sendText() {
-  const uid = selectedFriend.value?.uid
-  if (!uid)
+  if (!text.value)
+    return
+  const friendUid = selectedFriend.value?.uid
+  if (!friendUid)
     throw new Error('UID 为空')
-  const client = friendOnlineClients.value[uid]
+  const client = friendOnlineClients.value[friendUid]
   if (!client) {
     ElMessage({
       message: '好友不在线',
@@ -42,11 +61,11 @@ async function sendText() {
   }
   let res: Response | undefined
   if (networkInfo.value.ipv6 && client.ipv6)
-    res = await postTextMsgApi(`[${client.ipv6}]:${client.port}`, client.uid, text.value)
+    res = await postTextMsgApi(`[${client.ipv6}]:${client.port}`, friendUid, text.value)
   if (!res && networkInfo.value.ipv4 && client.ipv4)
-    res = await postTextMsgApi(`${client.ipv4}:${client.port}`, client.uid, text.value)!
+    res = await postTextMsgApi(`${client.ipv4}:${client.port}`, friendUid, text.value)!
   if (!res && DISPLAY_MODE_ENABLE)
-    res = await postTextMsgApi(`localhost:${client.port}`, client.uid, text.value)
+    res = await postTextMsgApi(`localhost:${client.port}`, friendUid, text.value)
   if (!res) {
     ElMessage({
       message: '无法进行 P2P 通信',
@@ -57,7 +76,15 @@ async function sendText() {
   }
   if (!res.ok)
     throw new Error(`发送文本消息失败，响应状态：${res.status}`)
+  chatStore.addNewMessage({
+    type: 'text',
+    from: uid.value!,
+    to: friendUid,
+    data: text.value,
+  })
   text.value = ''
+  await nextTick()
+  messageContainer.scrollTo({ top: 1e9, behavior: 'smooth' })
 }
 </script>
 
@@ -67,30 +94,15 @@ async function sendText() {
       <div px-4 py-2 text-lg border-b-1>
         {{ selectedFriend.profile?.nickname || selectedFriend.username }}
       </div>
-      <div px-4 py-2 flex-grow overflow-y-auto>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
-        聊天<br>
+      <div
+        ref="messageContainer"
+        px-4 py-2 space-y-2 flex-grow overflow-y-auto
+      >
+        <MessageComponent
+          v-for="msg, idx of selectedMessages" :key="idx"
+          :message="msg"
+          :position="msg.from === uid ? 'right' : 'left'"
+        />
       </div>
       <div border-t-1 flex flex-col>
         <div px-4 pt-4 pb-2 flex-grow overflow-hidden>

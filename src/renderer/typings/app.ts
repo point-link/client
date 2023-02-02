@@ -65,3 +65,12 @@ export interface FriendLogoutWsInData {
 }
 
 export type WsInData = FriendLoginWsInData | FriendLogoutWsInData
+
+export interface TextMessage {
+  type: 'text'
+  from: number
+  to: number
+  data: string
+}
+
+export type Message = TextMessage

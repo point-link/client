@@ -5,6 +5,7 @@
   "unocss.root": "src/renderer",
   "cSpell.words": [
     "bodyparser",
+    "datetime",
     "pointlink"
   ]
 }

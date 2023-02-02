@@ -13,7 +13,3 @@ const app = createApp(App)
 app.use(router)
 app.use(createPinia())
 app.mount('#app')
-
-window.electron.setNewTextMessageHandler((from, to, textMsg) => {
-  console.log(from, to, textMsg)
-})
