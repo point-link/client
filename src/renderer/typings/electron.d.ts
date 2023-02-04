@@ -8,6 +8,7 @@ export default interface ElectronApi {
   getNetworkInterfaces: () => Promise<NetworkInterface[]>,
   getMessageServerPort: () => Promise<number>,
   setNewTextMessageHandler: (handler: (from: number, to: number, textMsg: string) => void) => Promise<void>,
+  setNewImageMessageHandler: (handler: (from: number, to: number, mime: string, image: Uint8Array) => void) => Promise<void>,
 }
 
 declare global {

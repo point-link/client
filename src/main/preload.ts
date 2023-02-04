@@ -15,4 +15,9 @@ contextBridge.exposeInMainWorld('electron', {
       handler(from, to, textMsg)
     })
   },
+  async setNewImageMessageHandler(handler: (from: number, to: number, mime: string, image: Uint8Array) => void) {
+    ipcRenderer.on('new-image-message', (event, from, to, mime, image) => {
+      handler(from, to, mime, image)
+    })
+  },
 })

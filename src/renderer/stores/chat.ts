@@ -33,13 +33,11 @@ export const useChatStore = defineStore('chat', () => {
   }
 
   window.electron.setNewTextMessageHandler((from, to, textMsg) => {
-    console.log(from, to, textMsg)
-    addNewMessage({
-      type: 'text',
-      from,
-      to,
-      data: textMsg,
-    })
+    addNewMessage({ type: 'text', from, to, data: textMsg })
+  })
+
+  window.electron.setNewImageMessageHandler((from, to, mime, image) => {
+    addNewMessage({ type: 'image', from, to, mime, data: image })
   })
 
   return {

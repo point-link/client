@@ -73,4 +73,12 @@ export interface TextMessage {
   data: string
 }
 
-export type Message = TextMessage
+export interface ImageMessage {
+  type: 'image'
+  from: number
+  to: number
+  mime: string
+  data: Uint8Array
+}
+
+export type Message = TextMessage | ImageMessage

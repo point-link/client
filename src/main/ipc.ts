@@ -38,3 +38,8 @@ export async function sendNewTextMessageToMainWindow(from: number, to: number, t
   const mainWindow = await mainWindowPromise
   mainWindow.webContents.send('new-text-message', from, to, textMsg)
 }
+
+export async function sendNewImageMessageToMainWindow(from: number, to: number, mime: string, image: Uint8Array) {
+  const mainWindow = await mainWindowPromise
+  mainWindow.webContents.send('new-image-message', from, to, mime, image)
+}

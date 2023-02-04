@@ -5,6 +5,10 @@ defineProps<{
   message: Message
   position: 'left' | 'right'
 }>()
+
+function createImageUrl(mime: string, image: Uint8Array) {
+  return URL.createObjectURL(new Blob([image], { type: mime }))
+}
 </script>
 
 <template>
@@ -15,10 +19,15 @@ defineProps<{
     }"
   >
     <div
-      px-2 py-1 flex
+      p-2 flex
       bg-gray-200 rounded
     >
-      {{ message.data }}
+      <div v-if="message.type === 'text'">
+        {{ message.data }}
+      </div>
+      <div v-if="message.type === 'image'">
+        <img :src="createImageUrl(message.mime, message.data)" alt="image">
+      </div>
     </div>
   </div>
 </template>
