@@ -3,6 +3,7 @@ import { ElButton, ElMessage } from 'element-plus'
 import { type Ref, nextTick, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
+import type { Client } from '~/typings/app'
 import { useChatStore } from '~/stores/chat'
 import { useAccountStore } from '~/stores/account'
 import { useFriendStore } from '~/stores/friend'
@@ -34,37 +35,48 @@ watch(selectedFriend, (friend) => {
   text.value = textMap.get(friend.uid) || ''
 })
 
-async function sendText() {
-  // 检查
-  if (!uid.value || !text.value)
-    return
+function getHostAndPort(client: Client) {
+  if (networkInfo.value.ipv6 && client.ipv6)
+    return `[${client.ipv6}]:${client.port}`
+  else if (networkInfo.value.ipv4 && client.ipv4)
+    return `${client.ipv4}:${client.port}`
+  else if (DISPLAY_MODE_ENABLE)
+    return `localhost:${client.port}`
+}
+
+function getFriendClient() {
   const friendUid = selectedFriend.value?.uid
   if (!friendUid)
-    throw new Error('UID 为空')
-  const client = friendOnlineClients.value[friendUid]
+    throw new Error('好友 UID 为空值')
+  return friendOnlineClients.value[friendUid]
+}
+
+async function sendText() {
+  // 检查
+  if (!text.value)
+    return
+  if (!uid.value)
+    throw new Error('当前 UID 为空值')
+  // 获取好友客户端信息
+  const client = getFriendClient()
   if (!client) {
     ElMessage({ message: '好友不在线', type: 'warning', duration: 1500 })
     return
   }
   // 尝试发送消息
-  let res: Response | undefined
-  if (networkInfo.value.ipv6 && client.ipv6)
-    res = await postTextMsg(`[${client.ipv6}]:${client.port}`, uid.value, friendUid, text.value)
-  if (!res && networkInfo.value.ipv4 && client.ipv4)
-    res = await postTextMsg(`${client.ipv4}:${client.port}`, uid.value, friendUid, text.value)
-  if (!res && DISPLAY_MODE_ENABLE)
-    res = await postTextMsg(`localhost:${client.port}`, uid.value, friendUid, text.value)
-  if (!res) {
+  const hostAndPort = getHostAndPort(client)
+  if (!hostAndPort) {
     ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
     return
   }
+  const res = await postTextMsg(hostAndPort, uid.value, client.uid, text.value)
   if (!res.ok)
     throw new Error(`发送文本消息失败，响应状态：${res.status}`)
   // 发送成功后
   chatStore.addNewMessage({
     type: 'text',
     from: uid.value!,
-    to: friendUid,
+    to: client.uid,
     data: text.value,
   })
   text.value = ''
@@ -75,39 +87,33 @@ async function sendText() {
 async function sendImage(event: Event) {
   // 检查
   if (!uid.value)
-    return
-  const friendUid = selectedFriend.value?.uid
-  if (!friendUid)
-    throw new Error('UID 为空')
-  const client = friendOnlineClients.value[friendUid]
+    throw new Error('当前 UID 为空值')
+  // 获取好友客户端信息
+  const client = getFriendClient()
   if (!client) {
     ElMessage({ message: '好友不在线', type: 'warning', duration: 1500 })
     return
   }
+  // 获取图片
   const inputElement = event.target as HTMLInputElement
   const files = inputElement.files
   if (!files || files.length < 1)
     throw new Error('无法获取图片')
   const image = files[0]
   // 尝试发送消息
-  let res: Response | undefined
-  if (networkInfo.value.ipv6 && client.ipv6)
-    res = await postImageMsg(`[${client.ipv6}]:${client.port}`, uid.value, friendUid, image)
-  if (!res && networkInfo.value.ipv4 && client.ipv4)
-    res = await postImageMsg(`${client.ipv4}:${client.port}`, uid.value, friendUid, image)
-  if (!res && DISPLAY_MODE_ENABLE)
-    res = await postImageMsg(`localhost:${client.port}`, uid.value, friendUid, image)
-  if (!res) {
+  const hostAndPort = getHostAndPort(client)
+  if (!hostAndPort) {
     ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
     return
   }
+  const res = await postImageMsg(hostAndPort, uid.value, client.uid, image)
   if (!res.ok)
-    throw new Error(`发送文本消息失败，响应状态：${res.status}`)
+    throw new Error(`发送图片消息失败，响应状态：${res.status}`)
   // 发送成功后
   chatStore.addNewMessage({
     type: 'image',
     from: uid.value,
-    to: friendUid,
+    to: client.uid,
     mime: image.type,
     data: new Uint8Array(await image.arrayBuffer()),
   })
