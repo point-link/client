@@ -8,10 +8,10 @@ async function start() {
 
   // 主窗口
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 500,
-    minWidth: 800,
-    minHeight: 500,
+    width: 920,
+    height: 600,
+    minWidth: 920,
+    minHeight: 600,
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
       nodeIntegration: false,
