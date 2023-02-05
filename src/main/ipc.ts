@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { pathExists } from 'fs-extra'
 import { ipcMain, shell } from 'electron'
 
-import type { NetworkInterface, NetworkInterfaceInfo } from './typings/app'
+import type { Message, NetworkInterface, NetworkInterfaceInfo } from './typings/app'
 import { mainWindowPromise } from './main'
 import { getObservedIp } from './utils/net'
 import { MESSAGE_SERVER_PORT } from './message/server'
@@ -44,17 +44,7 @@ ipcMain.on('show-item-in-folder', (event, path: string) => {
   shell.showItemInFolder(resolve(path))
 })
 
-export async function sendNewTextMessageToMainWindow(from: number, to: number, textMsg: string) {
+export async function sendNewMessageToMainWindow(message: Message) {
   const mainWindow = await mainWindowPromise
-  mainWindow.webContents.send('new-text-message', from, to, textMsg)
-}
-
-export async function sendNewImageMessageToMainWindow(from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number, localPath?: string) {
-  const mainWindow = await mainWindowPromise
-  mainWindow.webContents.send('new-image-message', from, to, name, size, image, mime, width, height, localPath)
-}
-
-export async function sendNewFileMessageToMainWindow(from: number, to: number, name: string, size: number, localPath?: string) {
-  const mainWindow = await mainWindowPromise
-  mainWindow.webContents.send('new-file-message', from, to, name, size, localPath)
+  mainWindow.webContents.send('new-message', message)
 }

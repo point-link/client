@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import type { Message } from './typings/app'
 
 contextBridge.exposeInMainWorld('electron', {
   async getObservedIp(family: 4 | 6) {
@@ -10,19 +11,9 @@ contextBridge.exposeInMainWorld('electron', {
   async getMessageServerPort() {
     return await ipcRenderer.invoke('get-message-server-port')
   },
-  setNewTextMessageHandler(handler: (from: number, to: number, textMsg: string) => void) {
-    ipcRenderer.on('new-text-message', (event, from, to, textMsg) => {
-      handler(from, to, textMsg)
-    })
-  },
-  setNewImageMessageHandler(handler: (from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number, localPath?: string) => void) {
-    ipcRenderer.on('new-image-message', (event, from, to, name, size, image, mime, width, height) => {
-      handler(from, to, name, size, image, mime, width, height)
-    })
-  },
-  setNewFileMessageHandler(handler: (from: number, to: number, name: string, size: number, localPath?: string) => void) {
-    ipcRenderer.on('new-file-message', (event, from, to, name, size) => {
-      handler(from, to, name, size)
+  setNewMessageHandler(handler: (message: Message) => void) {
+    ipcRenderer.on('new-message', (event, message) => {
+      handler(message)
     })
   },
   async pathExists(path: string) {

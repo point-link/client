@@ -1,9 +1,7 @@
 import fse from 'fs-extra'
 import Router from '@koa/router'
 import {
-  sendNewFileMessageToMainWindow,
-  sendNewImageMessageToMainWindow,
-  sendNewTextMessageToMainWindow,
+  sendNewMessageToMainWindow,
 } from '../ipc'
 
 const router = new Router()
@@ -32,7 +30,9 @@ router.post('/message/text', async (ctx) => {
     return
   }
   // 响应
-  await sendNewTextMessageToMainWindow(from, to, textMsg)
+  await sendNewMessageToMainWindow({
+    type: 'text', from, to, data: textMsg,
+  })
   ctx.status = 200
 })
 
@@ -79,7 +79,18 @@ router.post('/message/image', async (ctx) => {
   await fse.rename(image.filepath, imagePath)
   // 发送图片信息到渲染进程
   const imageData = await fse.readFile(imagePath)
-  await sendNewImageMessageToMainWindow(from, to, image.originalFilename, image.size, imageData, mime, width, height, imagePath)
+  await sendNewMessageToMainWindow({
+    type: 'image',
+    from,
+    to,
+    name: image.originalFilename,
+    size: image.size,
+    data: imageData,
+    mime,
+    width,
+    height,
+    localPath: imagePath,
+  })
   // 响应
   ctx.status = 200
 })
@@ -114,7 +125,14 @@ router.post('/message/file', async (ctx) => {
   await fse.ensureDir(fileDir)
   await fse.rename(file.filepath, filePath)
   // 发送文件信息到渲染进程
-  await sendNewFileMessageToMainWindow(from, to, file.originalFilename, file.size, filePath)
+  await sendNewMessageToMainWindow({
+    type: 'file',
+    from,
+    to,
+    name: file.originalFilename,
+    size: file.size,
+    localPath: filePath,
+  })
   // 响应
   ctx.status = 200
 })
