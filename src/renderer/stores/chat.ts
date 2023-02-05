@@ -43,11 +43,11 @@ export const useChatStore = defineStore('chat', () => {
   window.electron.setNewTextMessageHandler((from, to, textMsg) => {
     addNewMessage({ type: 'text', from, to, data: textMsg })
   })
-  window.electron.setNewImageMessageHandler((from, to, name, size, image, mime, width, height) => {
-    addNewMessage({ type: 'image', from, to, name, size, data: image, mime, width, height })
+  window.electron.setNewImageMessageHandler((from, to, name, size, image, mime, width, height, localPath) => {
+    addNewMessage({ type: 'image', from, to, name, size, data: image, mime, width, height, localPath })
   })
-  window.electron.setNewFileMessageHandler((from, to, name, size) => {
-    addNewMessage({ type: 'file', from, to, name, size })
+  window.electron.setNewFileMessageHandler((from, to, name, size, localPath) => {
+    addNewMessage({ type: 'file', from, to, name, size, localPath })
   })
 
   return {

@@ -7,9 +7,11 @@ export default interface ElectronApi {
   getObservedIp: (family: 4 | 6) => Promise<string>,
   getNetworkInterfaces: () => Promise<NetworkInterface[]>,
   getMessageServerPort: () => Promise<number>,
-  setNewTextMessageHandler: (handler: (from: number, to: number, textMsg: string) => void) => Promise<void>,
-  setNewImageMessageHandler: (handler: (from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number) => void) => Promise<void>,
-  setNewFileMessageHandler: (handler: (from: number, to: number, name: string, size: number) => void) => Promise<void>,
+  setNewTextMessageHandler: (handler: (from: number, to: number, textMsg: string) => void) => void,
+  setNewImageMessageHandler: (handler: (from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number, localPath?: string) => void) => void,
+  setNewFileMessageHandler: (handler: (from: number, to: number, name: string, size: number, localPath?: string) => void) => void,
+  pathExists: (path: string) => Promise<boolean>
+  showItemInfolder: (path: string) => void
 }
 
 declare global {

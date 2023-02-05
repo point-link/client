@@ -10,19 +10,25 @@ contextBridge.exposeInMainWorld('electron', {
   async getMessageServerPort() {
     return await ipcRenderer.invoke('get-message-server-port')
   },
-  async setNewTextMessageHandler(handler: (from: number, to: number, textMsg: string) => void) {
+  setNewTextMessageHandler(handler: (from: number, to: number, textMsg: string) => void) {
     ipcRenderer.on('new-text-message', (event, from, to, textMsg) => {
       handler(from, to, textMsg)
     })
   },
-  async setNewImageMessageHandler(handler: (from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number) => void) {
+  setNewImageMessageHandler(handler: (from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number, localPath?: string) => void) {
     ipcRenderer.on('new-image-message', (event, from, to, name, size, image, mime, width, height) => {
       handler(from, to, name, size, image, mime, width, height)
     })
   },
-  async setNewFileMessageHandler(handler: (from: number, to: number, name: string, size: number) => void) {
+  setNewFileMessageHandler(handler: (from: number, to: number, name: string, size: number, localPath?: string) => void) {
     ipcRenderer.on('new-file-message', (event, from, to, name, size) => {
       handler(from, to, name, size)
     })
+  },
+  async pathExists(path: string) {
+    return await ipcRenderer.invoke('path-exists', path)
+  },
+  showItemInfolder(path: string) {
+    ipcRenderer.send('show-item-in-folder', path)
   },
 })

@@ -79,7 +79,7 @@ router.post('/message/image', async (ctx) => {
   await fse.rename(image.filepath, imagePath)
   // 发送图片信息到渲染进程
   const imageData = await fse.readFile(imagePath)
-  await sendNewImageMessageToMainWindow(from, to, image.originalFilename, image.size, imageData, mime, width, height)
+  await sendNewImageMessageToMainWindow(from, to, image.originalFilename, image.size, imageData, mime, width, height, imagePath)
   // 响应
   ctx.status = 200
 })
@@ -114,7 +114,7 @@ router.post('/message/file', async (ctx) => {
   await fse.ensureDir(fileDir)
   await fse.rename(file.filepath, filePath)
   // 发送文件信息到渲染进程
-  await sendNewFileMessageToMainWindow(from, to, file.originalFilename, file.size)
+  await sendNewFileMessageToMainWindow(from, to, file.originalFilename, file.size, filePath)
   // 响应
   ctx.status = 200
 })

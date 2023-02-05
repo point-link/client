@@ -23,6 +23,12 @@ function friendlySize(byteCount: number) {
   if (g < 1024)
     return `${g.toFixed(2)} KB`
 }
+
+function openLocalPath(localPath?: string) {
+  if (!localPath)
+    return
+  window.electron.showItemInfolder(localPath)
+}
 </script>
 
 <template>
@@ -39,7 +45,10 @@ function friendlySize(byteCount: number) {
       <div v-if="message.type === 'text'" max-w-96>
         {{ message.data }}
       </div>
-      <div v-if="message.type === 'image'" max-w-72>
+      <div
+        v-if="message.type === 'image'"
+        max-w-72
+      >
         <img
           :src="createImageUrl(message.mime, message.data)"
           :alt="message.name" :width="message.width" :height="message.height"

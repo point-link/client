@@ -1,5 +1,7 @@
 import os from 'node:os'
-import { ipcMain } from 'electron'
+import { resolve } from 'node:path'
+import { pathExists } from 'fs-extra'
+import { ipcMain, shell } from 'electron'
 
 import type { NetworkInterface, NetworkInterfaceInfo } from './typings/app'
 import { mainWindowPromise } from './main'
@@ -34,17 +36,25 @@ ipcMain.handle('get-message-server-port', () => {
   return MESSAGE_SERVER_PORT
 })
 
+ipcMain.handle('path-exists', async (event, path: string) => {
+  return await pathExists(path)
+})
+
+ipcMain.on('show-item-in-folder', (event, path: string) => {
+  shell.showItemInFolder(resolve(path))
+})
+
 export async function sendNewTextMessageToMainWindow(from: number, to: number, textMsg: string) {
   const mainWindow = await mainWindowPromise
   mainWindow.webContents.send('new-text-message', from, to, textMsg)
 }
 
-export async function sendNewImageMessageToMainWindow(from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number) {
+export async function sendNewImageMessageToMainWindow(from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number, localPath?: string) {
   const mainWindow = await mainWindowPromise
-  mainWindow.webContents.send('new-image-message', from, to, name, size, image, mime, width, height)
+  mainWindow.webContents.send('new-image-message', from, to, name, size, image, mime, width, height, localPath)
 }
 
-export async function sendNewFileMessageToMainWindow(from: number, to: number, name: string, size: number) {
+export async function sendNewFileMessageToMainWindow(from: number, to: number, name: string, size: number, localPath?: string) {
   const mainWindow = await mainWindowPromise
-  mainWindow.webContents.send('new-file-message', from, to, name, size)
+  mainWindow.webContents.send('new-file-message', from, to, name, size, localPath)
 }

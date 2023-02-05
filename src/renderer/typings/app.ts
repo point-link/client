@@ -83,6 +83,7 @@ export interface ImageMessage {
   name: string
   size: number
   data: Uint8Array
+  localPath?: string
 }
 
 export interface FileMessage {
@@ -91,6 +92,7 @@ export interface FileMessage {
   to: number
   name: string
   size: number
+  localPath?: string
 }
 
 export type Message = TextMessage | ImageMessage | FileMessage
