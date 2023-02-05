@@ -39,9 +39,9 @@ export async function sendNewTextMessageToMainWindow(from: number, to: number, t
   mainWindow.webContents.send('new-text-message', from, to, textMsg)
 }
 
-export async function sendNewImageMessageToMainWindow(from: number, to: number, mime: string, image: Uint8Array) {
+export async function sendNewImageMessageToMainWindow(from: number, to: number, name: string, size: number, image: Uint8Array, mime: string, width: number, height: number) {
   const mainWindow = await mainWindowPromise
-  mainWindow.webContents.send('new-image-message', from, to, mime, image)
+  mainWindow.webContents.send('new-image-message', from, to, name, size, image, mime, width, height)
 }
 
 export async function sendNewFileMessageToMainWindow(from: number, to: number, name: string, size: number) {

@@ -78,6 +78,10 @@ export interface ImageMessage {
   from: number
   to: number
   mime: string
+  width: number
+  height: number
+  name: string
+  size: number
   data: Uint8Array
 }
 

@@ -10,9 +10,18 @@ export async function postTextMsg(hostAndPort: string, from: number, to: number,
   })
 }
 
-export async function postImageMsg(hostAndPort: string, from: number, to: number, image: File) {
+export async function postImageMsg(
+  hostAndPort: string,
+  from: number,
+  to: number,
+  image: File,
+  width: number,
+  height: number,
+) {
   const formData = new FormData()
   formData.set('image', image)
+  formData.set('width', width.toString())
+  formData.set('height', height.toString())
   return await fetch(`http://${hostAndPort}/message/image`, {
     method: 'POST',
     headers: {

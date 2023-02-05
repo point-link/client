@@ -40,7 +40,10 @@ function friendlySize(byteCount: number) {
         {{ message.data }}
       </div>
       <div v-if="message.type === 'image'" max-w-72>
-        <img :src="createImageUrl(message.mime, message.data)" alt="image">
+        <img
+          :src="createImageUrl(message.mime, message.data)"
+          :alt="message.name" :width="message.width" :height="message.height"
+        >
       </div>
       <div v-if="message.type === 'file'" max-w-96 space-y-2>
         <div flex space-x-2>

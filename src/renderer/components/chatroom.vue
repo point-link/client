@@ -52,6 +52,17 @@ function getFriendClient() {
   return friendOnlineClients.value[friendUid]
 }
 
+async function getImageInfo(image: File) {
+  const imgEl = new Image()
+  imgEl.src = URL.createObjectURL(image)
+  return new Promise<{ width: number; height: number }>((resolve) => {
+    imgEl.onload = () => {
+      resolve({ width: imgEl.width, height: imgEl.height })
+      imgEl.src = ''
+    }
+  })
+}
+
 async function sendText() {
   // 检查
   if (!text.value)
@@ -101,13 +112,14 @@ async function sendImage(event: Event) {
   if (!files || files.length < 1)
     throw new Error('无法获取图片')
   const image = files[0]
+  const { width, height } = await getImageInfo(image)
   // 尝试发送消息
   const hostAndPort = getHostAndPort(client)
   if (!hostAndPort) {
     ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
     return
   }
-  const res = await postImageMsg(hostAndPort, uid.value, client.uid, image)
+  const res = await postImageMsg(hostAndPort, uid.value, client.uid, image, width, height)
   if (!res.ok)
     throw new Error(`发送图片消息失败，响应状态：${res.status}`)
   // 发送成功后
@@ -116,6 +128,10 @@ async function sendImage(event: Event) {
     from: uid.value,
     to: client.uid,
     mime: image.type,
+    width,
+    height,
+    name: image.name,
+    size: image.size,
     data: new Uint8Array(await image.arrayBuffer()),
   })
   imageInput.value.value = ''

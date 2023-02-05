@@ -56,8 +56,18 @@ router.post('/message/image', async (ctx) => {
     ctx.status = 400
     return
   }
+  if (!image.originalFilename) {
+    ctx.status = 400
+    return
+  }
   const mime = image.mimetype
   if (!mime) {
+    ctx.status = 400
+    return
+  }
+  const width = Number(ctx.request.body?.width)
+  const height = Number(ctx.request.body?.height)
+  if (!(width > 0 && height > 0)) {
     ctx.status = 400
     return
   }
@@ -69,7 +79,7 @@ router.post('/message/image', async (ctx) => {
   await fse.rename(image.filepath, imagePath)
   // 发送图片信息到渲染进程
   const imageData = await fse.readFile(imagePath)
-  await sendNewImageMessageToMainWindow(from, to, mime, imageData)
+  await sendNewImageMessageToMainWindow(from, to, image.originalFilename, image.size, imageData, mime, width, height)
   // 响应
   ctx.status = 200
 })
