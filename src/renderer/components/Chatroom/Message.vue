@@ -1,10 +1,17 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { ElMessage } from 'element-plus'
 import type { Message } from '~/typings/app'
 
-defineProps<{
+const props = defineProps<{
   message: Message
   position: 'left' | 'right'
 }>()
+
+const localPath = computed(() => {
+  const type = props.message.type
+  return (type === 'image' || type === 'file') ? props.message.localPath : undefined
+})
 
 function createImageUrl(mime: string, image: Uint8Array) {
   return URL.createObjectURL(new Blob([image], { type: mime }))
@@ -24,10 +31,14 @@ function friendlySize(byteCount: number) {
     return `${g.toFixed(2)} KB`
 }
 
-function openLocalPath(localPath?: string) {
-  if (!localPath)
+async function tryToOpenLocalPath() {
+  if (!localPath.value)
     return
-  window.electron.showItemInfolder(localPath)
+  if (!await window.electron.pathExists(localPath.value)) {
+    ElMessage({ message: '文件已被移动或删除', type: 'info', duration: 1500 })
+    return
+  }
+  window.electron.showItemInfolder(localPath.value)
 }
 </script>
 
@@ -52,10 +63,16 @@ function openLocalPath(localPath?: string) {
         <img
           :src="createImageUrl(message.mime, message.data)"
           :alt="message.name" :width="message.width" :height="message.height"
+          :class="{ 'cursor-pointer': localPath }"
+          @click="tryToOpenLocalPath"
         >
       </div>
       <div v-if="message.type === 'file'" max-w-96 space-y-2>
-        <div flex space-x-2>
+        <div
+          flex space-x-2
+          :class="{ 'cursor-pointer': localPath }"
+          @click="tryToOpenLocalPath"
+        >
           <div space-y-1>
             <div>
               {{ message.name }}
