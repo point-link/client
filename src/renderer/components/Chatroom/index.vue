@@ -30,15 +30,17 @@ watch(text, (value) => {
     return
   textMap.set(selectedFriend.value.uid, value)
 })
-watch(selectedFriend, (friend) => {
+watch(selectedFriend, async (friend) => {
   if (!friend)
     return
   text.value = textMap.get(friend.uid) || ''
+  await nextTick()
+  messageContainer.value.scrollTo({ top: 1e12 })
 })
 
 chatStore.onAddNewMessage(async () => {
   await nextTick()
-  messageContainer.value.scrollTo({ top: 1e9, behavior: 'smooth' })
+  messageContainer.value.scrollTo({ top: 1e12, behavior: 'smooth' })
 })
 
 function getHostAndPort(client: Client) {
