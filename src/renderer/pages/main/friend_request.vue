@@ -2,7 +2,7 @@
 import { ElButton } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useFriendStore } from '~/stores/friend'
-import FriendRequestItem from '~/components/friend_request_item.vue'
+import FriendRequestItem from '~/components/FriendRequestItem.vue'
 
 const router = useRouter()
 

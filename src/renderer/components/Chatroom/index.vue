@@ -3,6 +3,7 @@ import { ElButton, ElMessage } from 'element-plus'
 import { type Ref, nextTick, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
+import MessageComponent from './Message.vue'
 import type { Client } from '~/typings/app'
 import { useChatStore } from '~/stores/chat'
 import { useAccountStore } from '~/stores/account'
@@ -10,7 +11,6 @@ import { useFriendStore } from '~/stores/friend'
 import { useNetworkStore } from '~/stores/network'
 import { postFileMsg, postImageMsg, postTextMsg } from '~/api/message'
 import { DISPLAY_MODE_ENABLE } from '~/config'
-import MessageComponent from '~/components/message.vue'
 
 const messageContainer = ref<HTMLDivElement>() as Ref<HTMLDivElement>
 const imageInput = ref<HTMLInputElement>() as Ref<HTMLInputElement>
@@ -34,6 +34,11 @@ watch(selectedFriend, (friend) => {
   if (!friend)
     return
   text.value = textMap.get(friend.uid) || ''
+})
+
+chatStore.onAddNewMessage(async () => {
+  await nextTick()
+  messageContainer.value.scrollTo({ top: 1e9, behavior: 'smooth' })
 })
 
 function getHostAndPort(client: Client) {
@@ -92,8 +97,6 @@ async function sendText() {
     data: text.value,
   })
   text.value = ''
-  await nextTick()
-  messageContainer.value.scrollTo({ top: 1e9, behavior: 'smooth' })
 }
 
 async function sendImage(event: Event) {
@@ -135,8 +138,6 @@ async function sendImage(event: Event) {
     data: new Uint8Array(await image.arrayBuffer()),
   })
   imageInput.value.value = ''
-  await nextTick()
-  messageContainer.value.scrollTo({ top: 1e9, behavior: 'smooth' })
 }
 
 async function sendFile(event: Event) {
@@ -173,8 +174,6 @@ async function sendFile(event: Event) {
     size: file.size,
   })
   fileInput.value.value = ''
-  await nextTick()
-  messageContainer.value.scrollTo({ top: 1e9, behavior: 'smooth' })
 }
 </script>
 

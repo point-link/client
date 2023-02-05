@@ -5,6 +5,8 @@ import { useAccountStore } from './account'
 import type { Friend, Message } from '~/typings/app'
 
 export const useChatStore = defineStore('chat', () => {
+  const onAddNewMessageCallbacks: ((message: Message) => void)[] = []
+
   const accountStore = useAccountStore()
   const messagesMap = new Map<number, Message[]>()
 
@@ -30,6 +32,12 @@ export const useChatStore = defineStore('chat', () => {
       messagesMap.set(friendUid, messages)
     }
     messages.push({ ...message })
+    for (const cb of onAddNewMessageCallbacks)
+      cb({ ...message })
+  }
+
+  function onAddNewMessage(cb: (message: Message) => void) {
+    onAddNewMessageCallbacks.push(cb)
   }
 
   window.electron.setNewTextMessageHandler((from, to, textMsg) => {
@@ -46,5 +54,6 @@ export const useChatStore = defineStore('chat', () => {
     selectedFriend,
     selectedMessages,
     addNewMessage,
+    onAddNewMessage,
   }
 })
