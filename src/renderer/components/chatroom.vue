@@ -8,12 +8,13 @@ import { useChatStore } from '~/stores/chat'
 import { useAccountStore } from '~/stores/account'
 import { useFriendStore } from '~/stores/friend'
 import { useNetworkStore } from '~/stores/network'
-import { postImageMsg, postTextMsg } from '~/api/message'
+import { postFileMsg, postImageMsg, postTextMsg } from '~/api/message'
 import { DISPLAY_MODE_ENABLE } from '~/config'
 import MessageComponent from '~/components/message.vue'
 
 const messageContainer = ref<HTMLDivElement>() as Ref<HTMLDivElement>
 const imageInput = ref<HTMLInputElement>() as Ref<HTMLInputElement>
+const fileInput = ref<HTMLInputElement>() as Ref<HTMLInputElement>
 
 const chatStore = useChatStore()
 const { selectedFriend, selectedMessages } = storeToRefs(chatStore)
@@ -121,6 +122,44 @@ async function sendImage(event: Event) {
   await nextTick()
   messageContainer.value.scrollTo({ top: 1e9, behavior: 'smooth' })
 }
+
+async function sendFile(event: Event) {
+  // 检查
+  if (!uid.value)
+    throw new Error('当前 UID 为空值')
+  // 获取好友客户端信息
+  const client = getFriendClient()
+  if (!client) {
+    ElMessage({ message: '好友不在线', type: 'warning', duration: 1500 })
+    return
+  }
+  // 获取文件
+  const inputElement = event.target as HTMLInputElement
+  const files = inputElement.files
+  if (!files || files.length < 1)
+    throw new Error('无法获取文件')
+  const file = files[0]
+  // 尝试发送消息
+  const hostAndPort = getHostAndPort(client)
+  if (!hostAndPort) {
+    ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
+    return
+  }
+  const res = await postFileMsg(hostAndPort, uid.value, client.uid, file)
+  if (!res.ok)
+    throw new Error(`发送文件消息失败，响应状态：${res.status}`)
+  // 发送成功后
+  chatStore.addNewMessage({
+    type: 'file',
+    from: uid.value,
+    to: client.uid,
+    name: file.name,
+    size: file.size,
+  })
+  fileInput.value.value = ''
+  await nextTick()
+  messageContainer.value.scrollTo({ top: 1e9, behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -140,8 +179,8 @@ async function sendImage(event: Event) {
         />
       </div>
       <div border-t-1 flex flex-col>
-        <div px-4 pt-2>
-          <div
+        <div px-4 pt-2 space-x-2>
+          <button
             i-carbon-image cursor-pointer transition
             opacity="65 hover:85"
             @click="imageInput.click()"
@@ -152,7 +191,19 @@ async function sendImage(event: Event) {
               w-0 h-0
               @change="sendImage"
             >
-          </div>
+          </button>
+          <button
+            i-carbon-document-blank cursor-pointer transition
+            opacity="65 hover:85"
+            @click="fileInput.click()"
+          >
+            <input
+              ref="fileInput"
+              type="file" name="image"
+              w-0 h-0
+              @change="sendFile"
+            >
+          </button>
         </div>
         <div px-4 py-2 flex-grow overflow-hidden>
           <textarea

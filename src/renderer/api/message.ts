@@ -22,3 +22,16 @@ export async function postImageMsg(hostAndPort: string, from: number, to: number
     body: formData,
   })
 }
+
+export async function postFileMsg(hostAndPort: string, from: number, to: number, file: File) {
+  const formData = new FormData()
+  formData.set('file', file)
+  return await fetch(`http://${hostAndPort}/message/file`, {
+    method: 'POST',
+    headers: {
+      'x-from': `${from}`,
+      'x-to': `${to}`,
+    },
+    body: formData,
+  })
+}

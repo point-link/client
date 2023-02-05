@@ -9,6 +9,20 @@ defineProps<{
 function createImageUrl(mime: string, image: Uint8Array) {
   return URL.createObjectURL(new Blob([image], { type: mime }))
 }
+
+function friendlySize(byteCount: number) {
+  if (byteCount < 1024)
+    return `${byteCount} B`
+  const k = byteCount / 1024
+  if (k < 1024)
+    return `${k.toFixed(2)} KB`
+  const m = k / 1024
+  if (m < 1024)
+    return `${m.toFixed(2)} MB`
+  const g = m / 1024
+  if (g < 1024)
+    return `${g.toFixed(2)} KB`
+}
 </script>
 
 <template>
@@ -27,6 +41,21 @@ function createImageUrl(mime: string, image: Uint8Array) {
       </div>
       <div v-if="message.type === 'image'">
         <img :src="createImageUrl(message.mime, message.data)" alt="image">
+      </div>
+      <div v-if="message.type === 'file'" space-y-2>
+        <div flex space-x-2>
+          <div space-y-1>
+            <div>
+              {{ message.name }}
+            </div>
+            <div text-sm opacity-75>
+              {{ friendlySize(message.size) }}
+            </div>
+          </div>
+          <div flex justify-center items-center>
+            <div i-carbon-document-blank text-2xl opacity-75 />
+          </div>
+        </div>
       </div>
     </div>
   </div>

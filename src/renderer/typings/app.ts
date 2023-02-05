@@ -81,4 +81,12 @@ export interface ImageMessage {
   data: Uint8Array
 }
 
-export type Message = TextMessage | ImageMessage
+export interface FileMessage {
+  type: 'file'
+  from: number
+  to: number
+  name: string
+  size: number
+}
+
+export type Message = TextMessage | ImageMessage | FileMessage
