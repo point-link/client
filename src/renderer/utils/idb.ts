@@ -3,15 +3,15 @@ import { openDB } from 'idb'
 
 import type { Message } from '~/typings/app'
 
-interface MessageDB extends DBSchema {
+interface AppDB extends DBSchema {
   message: {
     value: Message
     key: string
   }
 }
 
-async function initMessageDB() {
-  const db = await openDB<MessageDB>('message-db', 1, {
+async function initAppDB() {
+  const db = await openDB<AppDB>('app', 1, {
     upgrade(db) {
       db.createObjectStore('message')
     },
@@ -19,17 +19,21 @@ async function initMessageDB() {
   return db
 }
 
-const db = await initMessageDB()
+const dbPromise = initAppDB()
 
-async function putMessage(message: Message) {
-  return await db.put('message', message, `${message.from}-${message.to}-${Date.now()}`)
+export async function putMessage(uid: number, message: Message) {
+  const friendUid = message.from === uid ? message.to : message.from
+  const db = await dbPromise
+  const tx = db.transaction('message', 'readwrite')
+  tx.store.put(message, `${uid}-${friendUid}-${message.timestamp}`)
+  await tx.done
 }
 
-async function getMessages(from: number, to: number) {
+export async function getMessages(uid: number, friendUid: number) {
+  const db = await dbPromise
   const messages: Message[] = []
   const tx = db.transaction('message')
-  const store = tx.objectStore('message')
-  let cursor = await store.openCursor(IDBKeyRange.lowerBound(`${from}-${to}-0`))
+  let cursor = await tx.store.openCursor(IDBKeyRange.lowerBound(`${uid}-${friendUid}-0`))
   while (cursor) {
     messages.push(cursor.value)
     cursor = await cursor.continue()

@@ -9,7 +9,7 @@ import { useChatStore } from '~/stores/chat'
 import { useAccountStore } from '~/stores/account'
 import { useFriendStore } from '~/stores/friend'
 import { useNetworkStore } from '~/stores/network'
-import { postFileMsg, postImageMsg, postTextMsg } from '~/api/message'
+import { postFileMessage, postImageMessage, postTextMessage } from '~/api/message'
 import { DISPLAY_MODE_ENABLE } from '~/config'
 
 const messageContainer = ref<HTMLDivElement>() as Ref<HTMLDivElement>
@@ -88,7 +88,8 @@ async function sendText() {
     ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
     return
   }
-  const res = await postTextMsg(hostAndPort, uid.value, client.uid, text.value)
+  const timestamp = Date.now()
+  const res = await postTextMessage(hostAndPort, uid.value, client.uid, timestamp, text.value)
   if (!res.ok)
     throw new Error(`发送文本消息失败，响应状态：${res.status}`)
   // 发送成功后
@@ -96,7 +97,7 @@ async function sendText() {
     type: 'text',
     from: uid.value!,
     to: client.uid,
-    timestamp: Date.now(),
+    timestamp,
     data: text.value,
   })
   text.value = ''
@@ -125,7 +126,8 @@ async function sendImage(event: Event) {
     ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
     return
   }
-  const res = await postImageMsg(hostAndPort, uid.value, client.uid, image, width, height)
+  const timestamp = Date.now()
+  const res = await postImageMessage(hostAndPort, uid.value, client.uid, timestamp, image, width, height)
   if (!res.ok)
     throw new Error(`发送图片消息失败，响应状态：${res.status}`)
   // 发送成功后
@@ -133,7 +135,7 @@ async function sendImage(event: Event) {
     type: 'image',
     from: uid.value,
     to: client.uid,
-    timestamp: Date.now(),
+    timestamp,
     mime: image.type,
     width,
     height,
@@ -166,7 +168,8 @@ async function sendFile(event: Event) {
     ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
     return
   }
-  const res = await postFileMsg(hostAndPort, uid.value, client.uid, file)
+  const timestamp = Date.now()
+  const res = await postFileMessage(hostAndPort, uid.value, client.uid, timestamp, file)
   if (!res.ok)
     throw new Error(`发送文件消息失败，响应状态：${res.status}`)
   // 发送成功后
@@ -174,7 +177,7 @@ async function sendFile(event: Event) {
     type: 'file',
     from: uid.value,
     to: client.uid,
-    timestamp: Date.now(),
+    timestamp,
     name: file.name,
     size: file.size,
   })

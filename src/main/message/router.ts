@@ -12,41 +12,55 @@ router.get('/hello', (ctx) => {
 
 router.post('/message/text', async (ctx) => {
   // 获取参数
-  const _from = ctx.headers['x-from']
+  const body = ctx.request.body
+  const _from = body.from
   const from = Number(_from)
   if (typeof _from !== 'string' || isNaN(from)) {
     ctx.status = 400
     return
   }
-  const _to = ctx.headers['x-to']
+  const _to = body.to
   const to = Number(_to)
   if (typeof _to !== 'string' || isNaN(to)) {
     ctx.status = 400
     return
   }
-  const textMsg = ctx.request.body
-  if (typeof textMsg !== 'string') {
+  const _timestamp = body.timestamp
+  const timestamp = Number(_timestamp)
+  if (typeof _timestamp !== 'string' || isNaN(timestamp)) {
+    ctx.status = 400
+    return
+  }
+  const text = body.text
+  if (typeof text !== 'string') {
     ctx.status = 400
     return
   }
   // 响应
   await sendNewMessageToMainWindow({
-    type: 'text', from, to, data: textMsg,
+    type: 'text', from, to, timestamp, data: text,
   })
   ctx.status = 200
 })
 
 router.post('/message/image', async (ctx) => {
   // 获取参数
-  const _from = ctx.headers['x-from']
+  const body = ctx.request.body
+  const _from = body.from
   const from = Number(_from)
   if (typeof _from !== 'string' || isNaN(from)) {
     ctx.status = 400
     return
   }
-  const _to = ctx.headers['x-to']
+  const _to = body.to
   const to = Number(_to)
   if (typeof _to !== 'string' || isNaN(to)) {
+    ctx.status = 400
+    return
+  }
+  const _timestamp = body.timestamp
+  const timestamp = Number(_timestamp)
+  if (typeof _timestamp !== 'string' || isNaN(timestamp)) {
     ctx.status = 400
     return
   }
@@ -83,12 +97,13 @@ router.post('/message/image', async (ctx) => {
     type: 'image',
     from,
     to,
-    name: image.originalFilename,
-    size: image.size,
-    data: imageData,
+    timestamp,
     mime,
     width,
     height,
+    name: image.originalFilename,
+    size: image.size,
+    data: imageData,
     localPath: imagePath,
   })
   // 响应
@@ -97,15 +112,22 @@ router.post('/message/image', async (ctx) => {
 
 router.post('/message/file', async (ctx) => {
   // 获取参数
-  const _from = ctx.headers['x-from']
+  const body = ctx.request.body
+  const _from = body.from
   const from = Number(_from)
   if (typeof _from !== 'string' || isNaN(from)) {
     ctx.status = 400
     return
   }
-  const _to = ctx.headers['x-to']
+  const _to = body.to
   const to = Number(_to)
   if (typeof _to !== 'string' || isNaN(to)) {
+    ctx.status = 400
+    return
+  }
+  const _timestamp = body.timestamp
+  const timestamp = Number(_timestamp)
+  if (typeof _timestamp !== 'string' || isNaN(timestamp)) {
     ctx.status = 400
     return
   }
@@ -129,6 +151,7 @@ router.post('/message/file', async (ctx) => {
     type: 'file',
     from,
     to,
+    timestamp,
     name: file.originalFilename,
     size: file.size,
     localPath: filePath,
