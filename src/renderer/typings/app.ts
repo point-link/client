@@ -66,17 +66,19 @@ export interface FriendLogoutWsInData {
 
 export type WsInData = FriendLoginWsInData | FriendLogoutWsInData
 
-export interface TextMessage {
-  type: 'text'
+export interface BasicMessage {
   from: number
   to: number
+  timestamp: number
+}
+
+export interface TextMessage extends BasicMessage {
+  type: 'text'
   data: string
 }
 
-export interface ImageMessage {
+export interface ImageMessage extends BasicMessage {
   type: 'image'
-  from: number
-  to: number
   mime: string
   width: number
   height: number
@@ -86,10 +88,8 @@ export interface ImageMessage {
   localPath?: string
 }
 
-export interface FileMessage {
+export interface FileMessage extends BasicMessage {
   type: 'file'
-  from: number
-  to: number
   name: string
   size: number
   localPath?: string

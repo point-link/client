@@ -96,6 +96,7 @@ async function sendText() {
     type: 'text',
     from: uid.value!,
     to: client.uid,
+    timestamp: Date.now(),
     data: text.value,
   })
   text.value = ''
@@ -132,6 +133,7 @@ async function sendImage(event: Event) {
     type: 'image',
     from: uid.value,
     to: client.uid,
+    timestamp: Date.now(),
     mime: image.type,
     width,
     height,
@@ -172,6 +174,7 @@ async function sendFile(event: Event) {
     type: 'file',
     from: uid.value,
     to: client.uid,
+    timestamp: Date.now(),
     name: file.name,
     size: file.size,
   })

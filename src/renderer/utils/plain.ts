@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 export async function sha256(data: string | Uint8Array) {
   const encoder = new TextEncoder()
   const buffer = typeof data === 'string' ? encoder.encode(data) : data
@@ -28,4 +30,12 @@ export function syncIgnoreError<T>(func: () => T) {
   catch (_err) {
     return undefined
   }
+}
+
+/**
+ * 将单位为毫秒的时间戳格式化为时间字符串。
+ * @param timestamp ms
+ */
+export function formatTime(timestamp: number) {
+  return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
 }
