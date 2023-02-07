@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElButton, ElForm, ElFormItem, ElInput, ElTag } from 'element-plus'
 
 import { DEFAULT_AVATAR_URL } from '~/config'
@@ -9,6 +9,7 @@ import { useAccountStore } from '~/stores/account'
 import { putFriendInfo } from '~/api/friend'
 
 const route = useRoute()
+const router = useRouter()
 const friendStore = useFriendStore()
 const accountStore = useAccountStore()
 
@@ -73,8 +74,13 @@ async function save() {
 </script>
 
 <template>
-  <div min-h-full p-10 flex flex-col items-center space-y-10>
-    <template v-if="friend">
+  <div min-h-full p-10 space-y-8>
+    <div>
+      <ElButton @click="router.replace('/main/chat/chatroom')">
+        返回
+      </ElButton>
+    </div>
+    <div v-if="friend" flex flex-col items-center space-y-10>
       <img
         w-24 aspect-1
         :src="friend.profile.avatar ? friend.profile.avatar : DEFAULT_AVATAR_URL"
@@ -125,6 +131,6 @@ async function save() {
       <ElButton :disabled="!edited" @click="save">
         保存
       </ElButton>
-    </template>
+    </div>
   </div>
 </template>
