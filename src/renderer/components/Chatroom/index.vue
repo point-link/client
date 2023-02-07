@@ -192,7 +192,7 @@ async function sendFile(event: Event) {
     <template v-if="selectedFriend">
       <div px-4 py-2 flex border-b-1>
         <div text-lg>
-          {{ selectedFriend.profile?.nickname || selectedFriend.username }}
+          {{ selectedFriend.remark || selectedFriend.profile.nickname || selectedFriend.username }}
         </div>
         <div flex-grow flex flex-row-reverse items-center>
           <button

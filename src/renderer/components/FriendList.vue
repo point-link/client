@@ -35,7 +35,7 @@ function openChatroom(friend: Friend) {
         >
       </div>
       <div>
-        {{ friend.profile.nickname || friend.username }}
+        {{ friend.remark || friend.profile.nickname || friend.username }}
       </div>
     </div>
   </div>
