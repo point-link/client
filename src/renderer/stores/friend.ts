@@ -18,6 +18,13 @@ export const useFriendStore = defineStore('friend', () => {
   const friendRequestsAsTarget = ref<FriendRequest[]>([])
   const friendOnlineClients = ref<Record<number, Client | undefined>>({})
 
+  function getFriend(uid: number) {
+    for (const friend of friends.value) {
+      if (friend.uid === uid)
+        return friend
+    }
+  }
+
   function addOnlineClient(client: Client) {
     friendOnlineClients.value[client.uid] = client
   }
@@ -96,6 +103,7 @@ export const useFriendStore = defineStore('friend', () => {
     friendRequestsAsRequester,
     friendRequestsAsTarget,
     friendOnlineClients,
+    getFriend,
     addOnlineClient,
     removeOnlineClient,
     refreshFriends,

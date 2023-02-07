@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ElButton, ElMessage } from 'element-plus'
 import { type Ref, nextTick, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import MessageComponent from './Message.vue'
@@ -16,6 +17,7 @@ const messageContainer = ref<HTMLDivElement>() as Ref<HTMLDivElement>
 const imageInput = ref<HTMLInputElement>() as Ref<HTMLInputElement>
 const fileInput = ref<HTMLInputElement>() as Ref<HTMLInputElement>
 
+const router = useRouter()
 const chatStore = useChatStore()
 const { selectedFriend, selectedMessages } = storeToRefs(chatStore)
 const { uid } = storeToRefs(useAccountStore())
@@ -188,8 +190,16 @@ async function sendFile(event: Event) {
 <template>
   <div w-full h-full flex flex-col>
     <template v-if="selectedFriend">
-      <div px-4 py-2 text-lg border-b-1>
-        {{ selectedFriend.profile?.nickname || selectedFriend.username }}
+      <div px-4 py-2 flex border-b-1>
+        <div text-lg>
+          {{ selectedFriend.profile?.nickname || selectedFriend.username }}
+        </div>
+        <div flex-grow flex flex-row-reverse items-center>
+          <button
+            i-carbon-user-avatar text-lg i-carbon-image opacity="65 hover:85" transition
+            @click="router.replace(`/main/chat/friend_detail/${selectedFriend?.uid}`)"
+          />
+        </div>
       </div>
       <div
         ref="messageContainer"
@@ -204,8 +214,7 @@ async function sendFile(event: Event) {
       <div border-t-1 flex flex-col>
         <div px-4 pt-2 space-x-2>
           <button
-            i-carbon-image cursor-pointer transition
-            opacity="65 hover:85"
+            i-carbon-image opacity="65 hover:85" transition
             @click="imageInput.click()"
           >
             <input
@@ -216,8 +225,7 @@ async function sendFile(event: Event) {
             >
           </button>
           <button
-            i-carbon-document-blank cursor-pointer transition
-            opacity="65 hover:85"
+            i-carbon-document-blank opacity="65 hover:85" transition
             @click="fileInput.click()"
           >
             <input

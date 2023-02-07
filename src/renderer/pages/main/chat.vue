@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import FriendList from '~/components/FriendList.vue'
-import Chatroom from '~/components/Chatroom/index.vue'
 </script>
 
 <template>
@@ -8,8 +7,8 @@ import Chatroom from '~/components/Chatroom/index.vue'
     <div w-48>
       <FriendList />
     </div>
-    <div flex-grow h-full>
-      <Chatroom />
+    <div flex-grow>
+      <RouterView />
     </div>
   </div>
 </template>
