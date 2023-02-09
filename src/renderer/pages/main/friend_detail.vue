@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElButton, ElForm, ElFormItem, ElInput, ElTag } from 'element-plus'
+import { ElButton, ElForm, ElFormItem, ElInput, ElMessage, ElTag } from 'element-plus'
 
 import { DEFAULT_AVATAR_URL } from '~/config'
+import { deleteFriend as deleteFriendApi, putFriendInfo } from '~/api/friend'
 import { useFriendStore } from '~/stores/friend'
 import { useAccountStore } from '~/stores/account'
-import { putFriendInfo } from '~/api/friend'
 
 const route = useRoute()
 const router = useRouter()
@@ -71,6 +71,22 @@ async function save() {
     throw new Error(`保存好友备注与标签失败，响应状态：${res.status}`)
   await friendStore.refreshFriends()
 }
+
+async function deleteFriend() {
+  if (!accountStore.token)
+    throw new Error('账号的 token 值为空')
+  if (!friend.value?.uid)
+    throw new Error('好友的 uid 值为空')
+  const res = await deleteFriendApi(accountStore.token, friend.value.uid)
+  if (!res.ok)
+    throw new Error(`删除好友失败，响应状态：${res.status}`)
+  await friendStore.refreshFriends()
+  ElMessage({
+    type: 'success',
+    message: '已删除好友',
+  })
+  router.replace('/main/chat')
+}
 </script>
 
 <template>
@@ -128,9 +144,14 @@ async function save() {
           <ElInput v-model="remark" />
         </ElFormItem>
       </ElForm>
-      <ElButton :disabled="!edited" @click="save">
-        保存
-      </ElButton>
+      <div flex>
+        <ElButton type="danger" plain @click="deleteFriend">
+          删除好友
+        </ElButton>
+        <ElButton :disabled="!edited" @click="save">
+          保存
+        </ElButton>
+      </div>
     </div>
   </div>
 </template>

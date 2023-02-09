@@ -7,7 +7,7 @@ import FriendList from '~/components/FriendList.vue'
     <div w-48>
       <FriendList />
     </div>
-    <div flex-grow>
+    <div flex-grow overflow-auto>
       <RouterView />
     </div>
   </div>

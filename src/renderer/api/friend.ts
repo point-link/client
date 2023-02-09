@@ -64,3 +64,12 @@ export async function putFriendRequestStatus(
     body: JSON.stringify({ role, action, associatedUid }),
   })
 }
+
+export async function deleteFriend(token: string, friendUid: number) {
+  return fetch(`${API_BASE_URL}/friend?friendUid=${friendUid}`, {
+    method: 'delete',
+    headers: {
+      'x-auth-token': token,
+    },
+  })
+}
