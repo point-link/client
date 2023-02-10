@@ -51,7 +51,7 @@ function getFriendStatus(uid: number) {
       <ElSelect
         v-model="tag"
         clearable
-        placeholder="标签"
+        placeholder="标签筛选"
       >
         <ElOption
           v-for="t of tags" :key="t"
