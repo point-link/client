@@ -4,7 +4,7 @@ import FriendList from '~/components/FriendList.vue'
 
 <template>
   <div h-full flex>
-    <div w-48>
+    <div w-54>
       <FriendList />
     </div>
     <div flex-grow overflow-auto>
