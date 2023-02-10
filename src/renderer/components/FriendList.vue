@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { ElOption, ElSelect } from 'element-plus'
+
+import { computed, ref } from 'vue'
 import { useFriendStore } from '~/stores/friend'
 import { useChatStore } from '~/stores/chat'
 import { useNetworkStore } from '~/stores/network'
@@ -11,6 +14,16 @@ const router = useRouter()
 const { networkInfo } = storeToRefs(useNetworkStore())
 const { friends, friendOnlineClients } = storeToRefs(useFriendStore())
 const { selectedFriend } = storeToRefs(useChatStore())
+
+const tag = ref('')
+const tags = computed(() => {
+  const set = new Set<string>()
+  for (const friend of friends.value) {
+    for (const tag of friend.tags)
+      set.add(tag)
+  }
+  return Array.from(set)
+})
 
 function openChatroom(friend: Friend) {
   selectedFriend.value = friend
@@ -34,30 +47,48 @@ function getFriendStatus(uid: number) {
 
 <template>
   <div w-full h-full bg-gray-100 border-r-1>
-    <div
-      v-for="friend of friends" :key="friend.uid"
-      p-2 flex items-center space-x-2
-      border-l-4
-      cursor-pointer
-      :class="{
-        'bg-gray-300': selectedFriend?.uid === friend.uid,
-        'border-gray': getFriendStatus(friend.uid) === 'offline',
-        'border-yellow': getFriendStatus(friend.uid) === 'online-unlinkable',
-        'border-green': getFriendStatus(friend.uid) === 'online-linkable',
-      }"
-      @click="openChatroom(friend)"
-    >
-      <div>
-        {{ }}
-        <img
-          w-10 aspect-1
-          :src="friend.profile.avatar ? friend.profile.avatar : DEFAULT_AVATAR_URL"
-          alt="头像"
-        >
-      </div>
-      <div>
-        {{ friend.remark || friend.profile.nickname || friend.username }}
-      </div>
+    <div p-2>
+      <ElSelect
+        v-model="tag"
+        clearable
+        placeholder="标签"
+      >
+        <ElOption
+          v-for="t of tags" :key="t"
+          :value="t"
+          :label="t"
+        />
+      </ElSelect>
     </div>
+
+    <template
+      v-for="friend of friends"
+    >
+      <div
+        v-if="tag ? friend.tags.includes(tag) : true"
+        :key="friend.uid"
+        p-2 flex items-center space-x-2
+        border-l-4
+        cursor-pointer
+        :class="{
+          'bg-gray-300': selectedFriend?.uid === friend.uid,
+          'border-gray': getFriendStatus(friend.uid) === 'offline',
+          'border-yellow': getFriendStatus(friend.uid) === 'online-unlinkable',
+          'border-green': getFriendStatus(friend.uid) === 'online-linkable',
+        }"
+        @click="openChatroom(friend)"
+      >
+        <div>
+          <img
+            w-10 aspect-1
+            :src="friend.profile.avatar ? friend.profile.avatar : DEFAULT_AVATAR_URL"
+            alt="头像"
+          >
+        </div>
+        <div>
+          {{ friend.remark || friend.profile.nickname || friend.username }}
+        </div>
+      </div>
+    </template>
   </div>
 </template>
