@@ -196,8 +196,12 @@ async function sendFile(event: Event) {
         </div>
         <div flex-grow flex flex-row-reverse items-center>
           <button
-            i-carbon-user-avatar text-lg i-carbon-image opacity="65 hover:85" transition
+            i-carbon-user-avatar text-lg opacity="65 hover:85" transition
             @click="router.replace(`/main/chat/friend_detail/${selectedFriend?.uid}`)"
+          />
+          <button
+            i-carbon-cloud-logging text-lg opacity="65 hover:85" transition mr-2
+            @click="router.replace(`/main/chat/chat_log/${selectedFriend?.uid}`)"
           />
         </div>
       </div>

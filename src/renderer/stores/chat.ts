@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 
 import { useAccountStore } from './account'
 import type { Friend, Message } from '~/typings/app'
-import { getMessages, putMessage } from '~/utils/idb'
+import { clearMessages as _clearMessages, getMessages, putMessage } from '~/utils/idb'
 
 export const useChatStore = defineStore('chat', () => {
   const onAddNewMessageCallbacks: ((message: Message) => void)[] = []
@@ -42,6 +42,14 @@ export const useChatStore = defineStore('chat', () => {
       cb({ ...message })
   }
 
+  async function clearMessages(friendUid: number) {
+    if (!accountStore.uid)
+      return
+    await _clearMessages(accountStore.uid, friendUid)
+    const reactiveMessages = await getReactiveMessages(friendUid)
+    reactiveMessages.length = 0
+  }
+
   function onAddNewMessage(cb: (message: Message) => void) {
     onAddNewMessageCallbacks.push(cb)
   }
@@ -53,7 +61,9 @@ export const useChatStore = defineStore('chat', () => {
   return {
     selectedFriend,
     selectedMessages,
+
     addNewMessage,
     onAddNewMessage,
+    clearMessages,
   }
 })
