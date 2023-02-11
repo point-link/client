@@ -38,3 +38,27 @@ export interface FileMessage extends BasicMessage {
 }
 
 export type Message = TextMessage | ImageMessage | FileMessage
+
+export interface RtcBasicSignal {
+  from: number
+  to: number
+  timestamp: number
+  rtcId: string
+}
+
+export interface RtcOfferSignal extends RtcBasicSignal {
+  type: 'offer'
+  offer: RTCSessionDescriptionInit
+}
+
+export interface RtcAnswerSignal extends RtcBasicSignal {
+  type: 'answer'
+  answer: RTCSessionDescriptionInit
+}
+
+export interface RtcIceCandidateSignal extends RtcBasicSignal {
+  type: 'ice-candidate'
+  candidate: RTCIceCandidateInit
+}
+
+export type RtcSignal = RtcOfferSignal | RtcAnswerSignal | RtcIceCandidateSignal

@@ -5,6 +5,7 @@ import Login from '~/pages/login.vue'
 import Signup from '~/pages/signup.vue'
 import Main from '~/pages/main/index.vue'
 import Chat from '~/pages/main/chat.vue'
+import ChatLog from '~/pages/main/chat_log.vue'
 import Chatroom from '~/pages/main/chatroom.vue'
 import FriendDetail from '~/pages/main/friend_detail.vue'
 import FriendRequest from '~/pages/main/friend_request.vue'
@@ -29,6 +30,10 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'chatroom',
             component: Chatroom,
+          },
+          {
+            path: 'chat_log/:friendUid',
+            component: ChatLog,
           },
           {
             path: 'friend_detail/:friendUid',

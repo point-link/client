@@ -1,7 +1,9 @@
 import fse from 'fs-extra'
 import Router from '@koa/router'
+import type { RtcOfferSignal } from '../typings/app'
 import {
   sendNewMessageToMainWindow,
+  sendRtcSignalToMainWindow,
 } from '../ipc'
 
 const router = new Router()
@@ -156,6 +158,16 @@ router.post('/message/file', async (ctx) => {
     size: file.size,
     localPath: filePath,
   })
+  // 响应
+  ctx.status = 200
+})
+
+router.post('/rtc/signal', async (ctx) => {
+  // 获取参数
+  const body = ctx.request.body
+  const offerSignal = body.signal as RtcOfferSignal // TODO: 类型校验
+  // 发送 WebRTC offer 到渲染进程
+  await sendRtcSignalToMainWindow(offerSignal)
   // 响应
   ctx.status = 200
 })

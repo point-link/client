@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { Message } from './typings/app'
+import type { Message, RtcSignal } from './typings/app'
 
 contextBridge.exposeInMainWorld('electron', {
   async getObservedIp(family: 4 | 6) {
@@ -21,5 +21,10 @@ contextBridge.exposeInMainWorld('electron', {
   },
   showItemInfolder(path: string) {
     ipcRenderer.send('show-item-in-folder', path)
+  },
+  setRtcSignalHandler(handler: (signal: RtcSignal) => void) {
+    ipcRenderer.on('rtc-signal', (event, signal) => {
+      handler(signal)
+    })
   },
 })

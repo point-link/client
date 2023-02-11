@@ -3,10 +3,10 @@ import { resolve } from 'node:path'
 import { pathExists } from 'fs-extra'
 import { ipcMain, shell } from 'electron'
 
-import type { Message, NetworkInterface, NetworkInterfaceInfo } from './typings/app'
+import type { Message, NetworkInterface, NetworkInterfaceInfo, RtcSignal } from './typings/app'
 import { mainWindowPromise } from './main'
 import { getObservedIp } from './utils/net'
-import { MESSAGE_SERVER_PORT } from './message/server'
+import { MESSAGE_SERVER_PORT } from './receiver/server'
 
 ipcMain.handle('get-observed-ip', async (event, family: 4 | 6) => {
   return await getObservedIp(family)
@@ -47,4 +47,9 @@ ipcMain.on('show-item-in-folder', (event, path: string) => {
 export async function sendNewMessageToMainWindow(message: Message) {
   const mainWindow = await mainWindowPromise
   mainWindow.webContents.send('new-message', message)
+}
+
+export async function sendRtcSignalToMainWindow(signal: RtcSignal) {
+  const mainWindow = await mainWindowPromise
+  mainWindow.webContents.send('rtc-signal', signal)
 }

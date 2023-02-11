@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { BrowserWindow, Menu, app, globalShortcut, session } from 'electron'
 import './ipc'
-import './message/server'
+import './receiver/server'
 
 async function start() {
   await app.whenReady()

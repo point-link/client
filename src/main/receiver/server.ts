@@ -13,7 +13,7 @@ function listen() {
     }
   }
   console.error(errors)
-  throw new Error('无法启动消息服务器')
+  throw new Error('无法启动接收器')
 }
 
 export const MESSAGE_SERVER_PORT = listen()

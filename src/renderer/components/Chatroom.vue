@@ -1,15 +1,16 @@
 <script lang="ts" setup>
-import { ElButton, ElMessage } from 'element-plus'
+import { ElButton, ElMessage, ElTooltip } from 'element-plus'
 import { type Ref, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import MessageComponent from './Message.vue'
-import type { Client } from '~/typings/app'
+import type { Client, RtcActionSignal } from '~/typings/app'
 import { useChatStore } from '~/stores/chat'
 import { useAccountStore } from '~/stores/account'
 import { useFriendStore } from '~/stores/friend'
 import { useNetworkStore } from '~/stores/network'
+import { useRtcStore } from '~/stores/rtc'
 import { postFileMessage, postImageMessage, postTextMessage } from '~/api/message'
 import { DISPLAY_MODE_ENABLE } from '~/config'
 
@@ -19,10 +20,12 @@ const fileInput = ref<HTMLInputElement>() as Ref<HTMLInputElement>
 
 const router = useRouter()
 const chatStore = useChatStore()
+const rtcStore = useRtcStore()
 const { selectedFriend, selectedMessages } = storeToRefs(chatStore)
 const { uid } = storeToRefs(useAccountStore())
 const { friendOnlineClients } = storeToRefs(useFriendStore())
 const { networkInfo } = storeToRefs(useNetworkStore())
+const { audioRtc } = storeToRefs(rtcStore)
 
 const text = ref('')
 const textMap = new Map<number, string>()
@@ -54,7 +57,7 @@ function getHostAndPort(client: Client) {
     return `localhost:${client.port}`
 }
 
-function getFriendClient() {
+function getSelectedFriendClient() {
   const friendUid = selectedFriend.value?.uid
   if (!friendUid)
     throw new Error('好友 UID 为空值')
@@ -79,7 +82,7 @@ async function sendText() {
   if (!uid.value)
     throw new Error('当前 UID 为空值')
   // 获取好友客户端信息
-  const client = getFriendClient()
+  const client = getSelectedFriendClient()
   if (!client) {
     ElMessage({ message: '好友不在线', type: 'warning', duration: 1500 })
     return
@@ -110,7 +113,7 @@ async function sendImage(event: Event) {
   if (!uid.value)
     throw new Error('当前 UID 为空值')
   // 获取好友客户端信息
-  const client = getFriendClient()
+  const client = getSelectedFriendClient()
   if (!client) {
     ElMessage({ message: '好友不在线', type: 'warning', duration: 1500 })
     return
@@ -153,7 +156,7 @@ async function sendFile(event: Event) {
   if (!uid.value)
     throw new Error('当前 UID 为空值')
   // 获取好友客户端信息
-  const client = getFriendClient()
+  const client = getSelectedFriendClient()
   if (!client) {
     ElMessage({ message: '好友不在线', type: 'warning', duration: 1500 })
     return
@@ -185,6 +188,47 @@ async function sendFile(event: Event) {
   })
   fileInput.value.value = ''
 }
+
+async function sendRtcSignal(
+  options:
+  | { type: 'offer' }
+  | { type: 'answer' }
+  | { type: 'action'; action: RtcActionSignal['action'] },
+) {
+  // 检查
+  if (!uid.value)
+    throw new Error('当前 UID 为空值')
+  // 获取相关信息
+  const client = getSelectedFriendClient()
+  if (!client) {
+    ElMessage({ message: '好友不在线', type: 'warning', duration: 1500 })
+    return
+  }
+  const hostAndPort = getHostAndPort(client)
+  if (!hostAndPort) {
+    ElMessage({ message: '无法进行 P2P 通信', type: 'warning', duration: 1500 })
+    return
+  }
+  switch (options.type) {
+    case 'offer':
+      rtcStore.postOffer(client.uid, hostAndPort)
+      break
+    case 'answer':
+      rtcStore.postAnswer(client.uid, hostAndPort)
+      break
+    case 'action':
+      rtcStore.postAction(client.uid, hostAndPort, options.action)
+      // 处理本地状态
+      switch (options.action) {
+        case 'cancel':
+        case 'reject':
+        case 'close':
+          rtcStore.closeAudioRtc(client.uid)
+          break
+      }
+      break
+  }
+}
 </script>
 
 <template>
@@ -196,8 +240,12 @@ async function sendFile(event: Event) {
         </div>
         <div flex-grow flex flex-row-reverse items-center>
           <button
-            i-carbon-user-avatar text-lg i-carbon-image opacity="65 hover:85" transition
+            i-carbon-user-avatar text-lg opacity="65 hover:85" transition
             @click="router.replace(`/main/chat/friend_detail/${selectedFriend?.uid}`)"
+          />
+          <button
+            i-carbon-cloud-logging text-lg opacity="65 hover:85" transition mr-2
+            @click="router.replace(`/main/chat/chat_log/${selectedFriend?.uid}`)"
           />
         </div>
       </div>
@@ -212,7 +260,85 @@ async function sendFile(event: Event) {
         />
       </div>
       <div border-t-1 flex flex-col>
-        <div px-4 pt-2 space-x-2>
+        <div
+          v-if="audioRtc[selectedFriend.uid]?.status === 'connected'"
+          px-4 py-1 space-x-2 flex border-b-1 bg-green-5 text-white
+        >
+          <div>
+            语音通话中...
+          </div>
+          <div flex-grow flex flex-row-reverse items-center>
+            <ElTooltip content="挂断" placement="top">
+              <button
+                i-carbon-phone-off text-sm text-white
+                @click="sendRtcSignal({ type: 'action', action: 'close' })"
+              />
+            </ElTooltip>
+            <ElTooltip
+              v-if="!audioRtc[selectedFriend.uid]?.muted"
+              content="静音" placement="top"
+            >
+              <button
+                i-carbon-volume-mute text-white mr-2
+                @click="() => {
+                  if (selectedFriend?.uid)
+                    rtcStore.muteAudioRtc(selectedFriend.uid)
+                }"
+              />
+            </ElTooltip>
+            <ElTooltip
+              v-if="audioRtc[selectedFriend.uid]?.muted"
+              content="取消静音" placement="top"
+            >
+              <button
+                i-carbon-volume-up text-white mr-2
+                @click="() => {
+                  if (selectedFriend?.uid)
+                    rtcStore.unmuteAudioRtc(selectedFriend.uid)
+                }"
+              />
+            </ElTooltip>
+          </div>
+        </div>
+        <div
+          v-if="audioRtc[selectedFriend.uid]?.status === 'requested'"
+          px-4 py-1 space-x-2 flex border-b-1 bg-sky-5 text-white
+        >
+          <div>
+            对方请求语音通话，是否接受？
+          </div>
+          <div flex-grow flex flex-row-reverse items-center>
+            <ElTooltip content="拒绝" placement="top">
+              <button
+                i-carbon-close text-sm text-white
+                @click="sendRtcSignal({ type: 'action', action: 'reject' })"
+              />
+            </ElTooltip>
+            <ElTooltip content="接受" placement="top">
+              <button
+                i-carbon-checkmark text-sm text-white mr-2
+                @click="sendRtcSignal({ type: 'answer' })"
+              />
+            </ElTooltip>
+          </div>
+        </div>
+        <div
+          v-if="audioRtc[selectedFriend.uid]?.status === 'waiting'"
+          px-4 py-1 space-x-2 flex border-b-1 bg-sky-5 text-white
+        >
+          <div>
+            正在等待对方接受语音通话...
+          </div>
+          <div flex-grow flex flex-row-reverse items-center>
+            <ElTooltip content="取消" placement="top">
+              <button
+                i-carbon-close text-sm text-white
+                @click="sendRtcSignal({ type: 'action', action: 'cancel' })"
+              />
+            </ElTooltip>
+          </div>
+        </div>
+        <div px-4 pt-2 space-x-2 flex>
           <button
             i-carbon-image opacity="65 hover:85" transition
             @click="imageInput.click()"
@@ -235,6 +361,10 @@ async function sendFile(event: Event) {
               @change="sendFile"
             >
           </button>
+          <button
+            i-carbon-phone opacity="65 hover:85" transition
+            @click="sendRtcSignal({ type: 'offer' })"
+          />
         </div>
         <div px-4 py-2 flex-grow overflow-hidden>
           <textarea

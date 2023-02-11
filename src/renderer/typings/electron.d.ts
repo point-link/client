@@ -1,4 +1,4 @@
-import type { NetworkInterface, Message } from './app'
+import type { NetworkInterface, Message, RtcSignal } from './app'
 
 /**
  * Should match main/preload.ts for typescript support in renderer
@@ -10,6 +10,7 @@ export default interface ElectronApi {
   setNewMessageHandler: (handler: (message: Message) => void) => void,
   pathExists: (path: string) => Promise<boolean>
   showItemInfolder: (path: string) => void
+  setRtcSignalHandler: (handler: (signal: RtcSignal) => void) => void,
 }
 
 declare global {
