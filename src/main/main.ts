@@ -4,6 +4,9 @@ import './ipc'
 import './receiver/server'
 
 async function start() {
+  // 设置 appData 的路径
+  app.setPath('appData', join(app.getPath('exe'), '..', 'app_data'))
+
   await app.whenReady()
 
   // 主窗口

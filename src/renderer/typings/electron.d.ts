@@ -9,6 +9,7 @@ export default interface ElectronApi {
   getMessageServerPort: () => Promise<number>,
   setNewMessageHandler: (handler: (message: Message) => void) => void,
   pathExists: (path: string) => Promise<boolean>
+  getPath: (name: 'home' | 'appData' | 'userData' | 'sessionData' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps') => Promise<string>
   showItemInfolder: (path: string) => void
   toggleDevtools: () => void
   setRtcSignalHandler: (handler: (signal: RtcSignal) => void) => void,

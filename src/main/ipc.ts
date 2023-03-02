@@ -1,7 +1,7 @@
 import os from 'node:os'
 import { resolve } from 'node:path'
 import { pathExists } from 'fs-extra'
-import { ipcMain, shell } from 'electron'
+import { app, ipcMain, shell } from 'electron'
 
 import type { Message, NetworkInterface, NetworkInterfaceInfo, RtcSignal } from './typings/app'
 import { mainWindowPromise } from './main'
@@ -38,6 +38,10 @@ ipcMain.handle('get-message-server-port', () => {
 
 ipcMain.handle('path-exists', async (event, path: string) => {
   return await pathExists(path)
+})
+
+ipcMain.handle('get-path', (event, name: 'home' | 'appData' | 'userData' | 'sessionData' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps') => {
+  return app.getPath(name)
 })
 
 ipcMain.on('show-item-in-folder', (event, path: string) => {

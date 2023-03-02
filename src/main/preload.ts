@@ -19,6 +19,9 @@ contextBridge.exposeInMainWorld('electron', {
   async pathExists(path: string) {
     return await ipcRenderer.invoke('path-exists', path)
   },
+  async getPath(name: string) {
+    return await ipcRenderer.invoke('get-path', name)
+  },
   showItemInfolder(path: string) {
     ipcRenderer.send('show-item-in-folder', path)
   },
