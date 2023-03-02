@@ -44,6 +44,11 @@ ipcMain.on('show-item-in-folder', (event, path: string) => {
   shell.showItemInFolder(resolve(path))
 })
 
+ipcMain.on('toggle-devtools', async () => {
+  const mainWindow = await mainWindowPromise
+  mainWindow.webContents.toggleDevTools()
+})
+
 export async function sendNewMessageToMainWindow(message: Message) {
   const mainWindow = await mainWindowPromise
   mainWindow.webContents.send('new-message', message)

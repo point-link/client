@@ -13,3 +13,9 @@ const app = createApp(App)
 app.use(router)
 app.use(createPinia())
 app.mount('#app')
+
+// 开发者工具
+window.addEventListener('keydown', (event) => {
+  if (event.code === 'F12')
+    window.electron.toggleDevtools()
+})

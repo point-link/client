@@ -1,5 +1,5 @@
 import { join } from 'path'
-import { BrowserWindow, Menu, app, globalShortcut, session } from 'electron'
+import { BrowserWindow, Menu, app, session } from 'electron'
 import './ipc'
 import './receiver/server'
 
@@ -39,11 +39,6 @@ async function start() {
         'Content-Security-Policy': ['script-src \'self\''],
       },
     })
-  })
-
-  // 开发者工具
-  globalShortcut.register('Alt+D', () => {
-    mainWindow.webContents.toggleDevTools()
   })
 
   // 监听退出事件

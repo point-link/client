@@ -10,6 +10,7 @@ export default interface ElectronApi {
   setNewMessageHandler: (handler: (message: Message) => void) => void,
   pathExists: (path: string) => Promise<boolean>
   showItemInfolder: (path: string) => void
+  toggleDevtools: () => void
   setRtcSignalHandler: (handler: (signal: RtcSignal) => void) => void,
 }
 

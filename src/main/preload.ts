@@ -22,6 +22,9 @@ contextBridge.exposeInMainWorld('electron', {
   showItemInfolder(path: string) {
     ipcRenderer.send('show-item-in-folder', path)
   },
+  toggleDevtools() {
+    ipcRenderer.send('toggle-devtools')
+  },
   setRtcSignalHandler(handler: (signal: RtcSignal) => void) {
     ipcRenderer.on('rtc-signal', (event, signal) => {
       handler(signal)
