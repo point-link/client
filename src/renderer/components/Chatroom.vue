@@ -39,6 +39,8 @@ watch(selectedFriend, async (friend) => {
   if (!friend)
     return
   text.value = textMap.get(friend.uid) || ''
+})
+watch(selectedMessages, async () => {
   await nextTick()
   messageContainer.value.scrollTo({ top: 1e12 })
 })
