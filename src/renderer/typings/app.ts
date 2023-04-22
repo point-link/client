@@ -51,20 +51,18 @@ export interface NetworkInterface {
   information: NetworkInterfaceInfo[]
 }
 
-export interface FriendLoginWsInData {
+export type WsInData = {
   type: 'friend-login'
   uid: number
   ipv4: string | null
   ipv6: string | null
   port: number | null
-}
-
-export interface FriendLogoutWsInData {
+} | {
   type: 'friend-logout'
   uid: number
+} | {
+  type: 'friend-update'
 }
-
-export type WsInData = FriendLoginWsInData | FriendLogoutWsInData
 
 export interface BasicMessage {
   from: number

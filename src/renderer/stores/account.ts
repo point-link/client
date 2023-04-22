@@ -53,7 +53,7 @@ export const useAccountStore = defineStore('account', () => {
       return
     const res = await findAccount(uid.value)
     if (!res.ok)
-      throw new Error(`刷新个人资料失败，响应状态：${res.status}`)
+      throw new Error(`刷新账号信息失败，响应状态：${res.status}`)
     const account = await res.json()
     profile.value = account.profile
   }

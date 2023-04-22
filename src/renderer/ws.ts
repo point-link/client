@@ -33,6 +33,10 @@ function setupWs(ws: WebSocket) {
         case 'friend-logout':
           friendStore.removeOnlineClient(data.uid)
           break
+        case 'friend-update':
+          friendStore.refreshFriendRequests()
+          friendStore.refreshFriends()
+          break
       }
     }
   })

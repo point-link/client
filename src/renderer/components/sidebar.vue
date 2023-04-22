@@ -21,9 +21,9 @@ const { profile } = storeToRefs(accountStore)
       flex-1
       flex flex-col items-center space-y-4
     >
-      <!-- 个人资料 -->
+      <!-- 账号信息 -->
       <ElTooltip
-        content="个人资料"
+        content="账号信息"
         placement="right"
       >
         <img

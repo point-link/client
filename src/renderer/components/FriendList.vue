@@ -61,9 +61,7 @@ function getFriendStatus(uid: number) {
       </ElSelect>
     </div>
 
-    <template
-      v-for="friend of friends"
-    >
+    <template v-for="friend of friends">
       <div
         v-if="tag ? friend.tags.includes(tag) : true"
         :key="friend.uid"
@@ -88,6 +86,11 @@ function getFriendStatus(uid: number) {
         <div>
           {{ friend.remark || friend.profile.nickname || friend.username }}
         </div>
+      </div>
+    </template>
+    <template v-if="friends.length === 0">
+      <div text-center py-4 opacity-75>
+        无好友
       </div>
     </template>
   </div>

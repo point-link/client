@@ -20,7 +20,7 @@ async function save() {
     throw new Error('账号的 token 值为空')
   const res = await putAccountProfile(token.value, editingProfile)
   if (!res.ok)
-    throw new Error(`更新个人资料失败，响应状态：${res.status}`)
+    throw new Error(`更新账号信息失败，响应状态：${res.status}`)
   await accountStore.refreshAccountProfile()
 }
 </script>
@@ -32,12 +32,15 @@ async function save() {
       :src="editingProfile.avatar ? editingProfile.avatar : DEFAULT_AVATAR_URL"
       alt="头像"
     >
-    <ElForm label-position="left" label-width="60px">
+    <ElForm label-position="left" label-width="60px" w="45%">
       <ElFormItem label="UID">
         {{ uid }}
       </ElFormItem>
       <ElFormItem label="用户名">
         {{ username }}
+      </ElFormItem>
+      <ElFormItem label="头像">
+        <ElInput v-model="editingProfile.avatar" />
       </ElFormItem>
       <ElFormItem label="昵称">
         <ElInput v-model="editingProfile.nickname" />
