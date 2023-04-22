@@ -29,7 +29,7 @@ async function signup() {
     space-y-4
   >
     <h1 text-xl font-bold>
-      注册点联账号
+      注册账号
     </h1>
     <div w-64>
       <ElInput
